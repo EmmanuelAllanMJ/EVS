@@ -11,19 +11,6 @@ export default function ApiConnect() {
   const baseURL = "127.0.0.1:5000/";
   const src = "http://127.0.0.1:5000/video_feed";
 
-  // const onCaptureHandler = () => {
-  //   const postData = async () => {
-  //     const response = await fetch("http://127.0.0.1:5000/requests", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ item }),
-  //     });
-  //   };
-  //   postData();
-  // };
-
   function createPost() {
     axios
       .post(`${baseURL}/requests`, {

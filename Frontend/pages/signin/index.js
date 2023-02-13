@@ -1,5 +1,3 @@
-import React, { useRef } from "react";
-import SIgnUp from "../../components/Section/Signin/Signin";
 import Card from "../../components/ui/Card";
 import Google from "../../components/Section/Signin/Google";
 import Facebook from "../../components/Section/Signin/Facebook";
