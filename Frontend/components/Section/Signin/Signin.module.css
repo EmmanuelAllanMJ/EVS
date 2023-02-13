@@ -1,0 +1,81 @@
+.main {
+  background-color: #000;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  min-height: 100vh;
+  color: #fff;
+  /* -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px); */
+}
+
+.title {
+  /* filter: blur(10px); */
+  font-size: 3.6rem;
+  font-weight: bold;
+  margin-bottom: 2.4rem;
+}
+.position {
+  position: relative;
+  z-index: 1;
+  background-color: #313131;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.6rem;
+  padding: 3.6rem;
+  border-radius: 75px;
+}
+.icon {
+  height: 2.4rem;
+  width: 2.4rem;
+}
+.google,
+.facebook {
+  width: 100%;
+  display: flex;
+  padding: 1.6rem;
+  font-size: 2rem;
+  justify-content: center;
+  border-radius: 50px;
+  display: flex;
+  gap: 2.4rem;
+  align-items: center;
+  justify-content: center;
+}
+.google {
+  background-color: #db4437;
+}
+.facebook {
+  background-color: #4267b2;
+}
+.or {
+  font-size: 1.6rem;
+  color: #777;
+}
+.input {
+  background-color: inherit;
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  text-align: center;
+
+  background: none;
+  border-radius: 0;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.input[type="number"]::-webkit-inner-spin-button,
+.input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
