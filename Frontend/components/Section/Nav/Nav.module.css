@@ -1,0 +1,28 @@
+.nav {
+  width: 50rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: transparent;
+  width: 100%;
+  position: fixed;
+  top: 0;
+}
+.btn {
+  padding-right: 4.8rem;
+}
+.logo {
+  padding: 2.4rem 0;
+  padding-left: 4.8rem;
+  font-size: 4.8rem;
+  font-weight: bold;
+
+  background: linear-gradient(to right, #38309c 0%, #7030a0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.e {
+  background: linear-gradient(to right, #38309c 0%, #7030a0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
