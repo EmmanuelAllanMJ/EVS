@@ -16,7 +16,10 @@ function SignUp() {
     <div className={classes.main}>
       <p className={classes.title}>SIgnUp</p>
       <Card>
-        <div className={classes.google} onClick={() => signIn("google")}>
+        <div
+          className={classes.google}
+          onClick={() => signIn("google", { callbackUrl: "/" })}
+        >
           <div className={classes.icon}>
             <Google />
           </div>
