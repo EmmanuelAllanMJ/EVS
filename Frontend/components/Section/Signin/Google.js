@@ -2,8 +2,28 @@ import React from "react";
 
 function Google() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-      <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+      <defs>
+        <path
+          id="a"
+          d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"
+        />
+      </defs>
+      <clipPath id="b">
+        <use href="#a" overflow="visible" />
+      </clipPath>
+      <path clip-path="url(#b)" fill="#FBBC05" d="M0 37V11l17 13z" />
+      <path
+        clip-path="url(#b)"
+        fill="#EA4335"
+        d="M0 11l17 13 7-6.1L48 14V0H0z"
+      />
+      <path
+        clip-path="url(#b)"
+        fill="#34A853"
+        d="M0 37l30-23 7.9 1L48 0v48H0z"
+      />
+      <path clip-path="url(#b)" fill="#4285F4" d="M48 48L17 24l-4-3 35-10z" />
     </svg>
   );
 }

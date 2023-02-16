@@ -34,6 +34,9 @@ export const authOptions = {
       return Promise.resolve("/");
     },
   },
+  pages: {
+    signOut: "/auth/signout",
+  },
 };
 
 export default NextAuth(authOptions);
