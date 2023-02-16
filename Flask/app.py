@@ -20,7 +20,7 @@ def gen():
             img = cv2.resize(img, (0,0), fx=1, fy=1) 
             frame = cv2.imencode('.jpg', img)[1].tobytes()
             yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-            time.sleep(0.1)
+            # time.sleep(0.1)
         else: 
             break
         
@@ -30,9 +30,6 @@ def video_feed():
     """Video streaming route. Put this in the src attribute of an img tag."""
     return Response(gen(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
-
-    
-
 
 
 #server start port
