@@ -7,15 +7,16 @@ function index() {
   const { data: session } = useSession();
 
   // logged in
-  if (session) {
-    return (
-      <>
-        <ApiConnect />
-      </>
-    );
-  } else {
-    return <MainPage />;
-  }
+  // if (session) {
+  //   return (
+  //     <>
+  //       <ApiConnect />
+  //     </>
+  //   );
+  // } else {
+  //   return <MainPage />;
+  // }
+  return <ApiConnect />;
 }
 
 export default index;

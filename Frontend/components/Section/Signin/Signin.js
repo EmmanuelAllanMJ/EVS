@@ -7,7 +7,7 @@ import Card from "../../ui/Card";
 import { signIn } from "next-auth/react";
 
 function SignUp() {
-  const inputPhone = useRef();
+  // const inputPhone = useRef();
   const onButtonClick = (e) => {
     e.preventDefault();
     console.log(inputPhone.current.value);
@@ -35,7 +35,7 @@ function SignUp() {
         <p className={classes.or}>or</p>
 
         <input
-          ref={inputPhone}
+          // ref={inputPhone}
           className={classes.input}
           placeholder="+91  Enter your phone number"
           required

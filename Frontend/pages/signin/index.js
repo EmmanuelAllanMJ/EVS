@@ -8,7 +8,7 @@ import { signIn } from "next-auth/react";
 import Signin from "../../components/Section/Signin/Signin";
 
 function SignIn() {
-  const inputPhone = useRef();
+  // const inputPhone = useRef();
   const onButtonClick = (e) => {
     e.preventDefault();
     console.log(inputPhone.current.value);
