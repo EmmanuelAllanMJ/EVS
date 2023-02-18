@@ -1,11 +1,24 @@
 import { useSession } from "next-auth/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import classes from "./ApiConnect.module.css";
 
 export default function ApiConnect() {
+  const [response, setResponse] = useState("");
+  const [show, setShow] = useState(false);
   const { data: session } = useSession();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShow(false);
+    }, 1000);
+    return () => {
+      setShow(true);
+      clearTimeout(timer);
+    };
+  }, [response]);
+
   const baseURL = "127.0.0.1:5000/";
   const src = "http://127.0.0.1:5000/video_feed";
 
@@ -17,7 +30,10 @@ export default function ApiConnect() {
       body: JSON.stringify({ email: session.user.email, click: "dp" }),
     })
       .then((res) => {
-        console.log(res.json());
+        return res.json();
+      })
+      .then((data) => {
+        setResponse(data);
       })
       .catch((err) => {
         console.log(err);
@@ -37,20 +53,33 @@ export default function ApiConnect() {
         console.log(err);
       });
   }
-  function clickPan(e) {
-    e.preventDefault();
-    fetch("http://127.0.0.1:5000/click_photo", {
+
+  const [selectedFile, setSelectedFile] = useState();
+  const [isSelected, setIsSelected] = useState(false);
+
+  const changeHandler = (event) => {
+    setSelectedFile(event.target.files[0]);
+    setIsSelected(true);
+  };
+
+  const handleSubmission = () => {
+    const formData = new FormData();
+
+    formData.append("File", selectedFile);
+    let email = session.user.email.split("@")[0];
+    console.log(email);
+    fetch(`http://localhost:5000/upload/${email}/aadhar`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: session.user.email, click: "pan" }),
+      body: formData,
     })
-      .then((res) => {
-        console.log(res.json());
+      .then((response) => response.json())
+      .then((result) => {
+        console.log("Success:", result);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        console.error("Error:", error);
       });
-  }
+  };
 
   return (
     <div className={classes.app}>
@@ -66,18 +95,35 @@ export default function ApiConnect() {
               Capture
             </Button>
           </div>
+          <div>
+            <input type="file" name="file" onChange={changeHandler} />
+            {isSelected ? (
+              <div>
+                <p>Filename: {selectedFile.name}</p>
+                <p>Filetype: {selectedFile.type}</p>
+                <p>Size in bytes: {selectedFile.size}</p>
+                <p>
+                  lastModifiedDate:{" "}
+                  {selectedFile.lastModifiedDate.toLocaleDateString()}
+                </p>
+              </div>
+            ) : (
+              <p>Select a file to show details</p>
+            )}
+            <div>
+              <button onClick={handleSubmission}>Submit</button>
+            </div>
+          </div>
+
           <div className={classes.description}>
             <p>Aadhar</p>
-            <Button onClick={clickAadhar} className={classes.btn}>
-              Aadhar
-            </Button>
+            <Button className={classes.btn}>Aadhar</Button>
           </div>
           <div className={classes.description}>
             <p>PAN</p>
-            <Button onClick={clickPan} className={classes.btn}>
-              PAN
-            </Button>
+            <Button className={classes.btn}>PAN</Button>
           </div>
+          {show && <p className={classes.response}>{response}</p>}
         </Card>
       </div>
     </div>

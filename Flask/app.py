@@ -1,3 +1,4 @@
+from io import BytesIO
 import time
 import datetime
 import cv2 
@@ -9,6 +10,11 @@ from pyzbar.pyzbar import decode
 from pyaadhaar.utils import isSecureQr
 from pyaadhaar.decode import AadhaarSecureQr
 
+from flask_wtf import FlaskForm
+from wtforms import FileField, SubmitField
+from werkzeug.utils import secure_filename
+from wtforms.validators import InputRequired
+
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -19,9 +25,10 @@ try:
 except OSError as error:
     pass
 
-global capture,name,type
+global capture,name,type,response
 name='sample'
 capture = 0
+response = False
 
 @app.route('/')
 def hello():
@@ -30,7 +37,7 @@ def hello():
 
 def gen():
     """Video streaming generator function."""
-    global capture,name,type
+    global capture,name,type,response
   
     cap = cv2.VideoCapture(0)
 
@@ -69,29 +76,37 @@ def gen():
                         (x,y,w,h) = faces[0]
                         cv2.imwrite(f"./shots/{name}-{type}.jpg", img1[y:y+h,x:x+w]) 
                         capture = 0
+                        response='face'
+
                     except:
                         continue
-                elif type=='aadhar' or type=='pan':
-                    cv2.imwrite(f"./shots/{name}-{type}.jpg", img1) 
-                    capture = 0 
+                elif type=='aadhar' :
+                    # cv2.imwrite(f"./shots/{name}-{type}.jpg", img1) 
                 
-            # if type == 'aadhar':
-            #     img = cv2.imread('./shots/{name}-aadhar.jpg')
-            #     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                    # img = cv2.imread('./shots/{name}-aadhar.jpg')
+                    gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+                    # blur = cv2.GaussianBlur(gray,(3,3),0) #gaussian blur, blurs image 
+                    thresh_adapt = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,115,1)
+                    cv2.imwrite(f"./shots/{name}-{type}.jpg", thresh_adapt) 
 
-            #     code = decode(gray)
-            #     qrData = code[0].data
-            #     print(code)
+                    try:
+                        code = decode(thresh_adapt)
+                        qrData = code[0].data
+                        print(code, qrData)
 
-            #     isSecureQR = (isSecureQr(qrData)) 
+                        isSecureQR = (isSecureQr(qrData)) 
+                        # capture=0
+                        response = 'aadhar'
 
-            #     if isSecureQR:
-            #         secure_qr = AadhaarSecureQr(int(qrData))
-            #         decoded_secure_qr_data = secure_qr.decodeddata()
-            #         print(decoded_secure_qr_data)
-            #         secure_qr.saveimage('aadhar-image.jpg')
-            
-            
+                        if isSecureQR:
+                            secure_qr = AadhaarSecureQr(int(qrData)) 
+                            decoded_secure_qr_data = secure_qr.decodeddata()
+                            print(decoded_secure_qr_data)
+                            secure_qr.saveimage('aadhar-image.jpg')
+                            capture = 0 
+                    except:
+                        pass
+
                     
             frame = cv2.imencode('.jpg', img)[1].tobytes()
             yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
@@ -113,7 +128,8 @@ def video_feed():
 @app.route('/click_photo',methods=['POST'])
 @cross_origin()
 def onClick():
-    global capture,name,type
+    global capture,name,type, response
+
     now = datetime.datetime.now()
     request_body =request.get_json()
     if request.method=='POST': 
@@ -122,10 +138,19 @@ def onClick():
         name= email[:email.index('@')]
         type = request_body['click']
         
-        return jsonify("Captured",now)
+        if(response):
+            return jsonify("Captured ",type)
     return jsonify("Error")
 
 
+@app.route('/upload/<string:emailId>/<string:typeId>',methods=['POST'])
+def upload(emailId,typeId):
+    file = request.files['File']
+    print(file)
+    # Save the file in the uploads folder
+    file.save(os.path.join('shots', secure_filename(f"{emailId}-{typeId}.jpg")))
+    return jsonify("Uploaded Successfully")
+   
      
 
 #server start port
