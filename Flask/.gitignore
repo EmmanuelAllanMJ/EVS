@@ -23,3 +23,6 @@ htmlcov/
 .coverage
 .coverage.*
 *,cover
+
+#photo files
+/shots/pixiemj00/

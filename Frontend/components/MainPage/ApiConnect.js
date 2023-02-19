@@ -55,17 +55,25 @@ export default function ApiConnect() {
   }
 
   const [selectedFile, setSelectedFile] = useState();
+  const [selectedFile1, setSelectedFile1] = useState();
   const [isSelected, setIsSelected] = useState(false);
+  const [isSelected1, setIsSelected1] = useState(false);
 
   const changeHandler = (event) => {
     setSelectedFile(event.target.files[0]);
     setIsSelected(true);
   };
+  const changeHandler1 = (event) => {
+    setSelectedFile1(event.target.files[0]);
+    setIsSelected1(true);
+  };
 
   const handleSubmission = () => {
     const formData = new FormData();
+    // const formData1 = new FormData();
 
     formData.append("File", selectedFile);
+    formData.append("File1", selectedFile1);
     let email = session.user.email.split("@")[0];
     console.log(email);
     fetch(`http://localhost:5000/upload/${email}/aadhar`, {
@@ -105,6 +113,20 @@ export default function ApiConnect() {
                 <p>
                   lastModifiedDate:{" "}
                   {selectedFile.lastModifiedDate.toLocaleDateString()}
+                </p>
+              </div>
+            ) : (
+              <p>Select a file to show details</p>
+            )}
+            <input type="file" name="file" onChange={changeHandler1} />
+            {isSelected1 ? (
+              <div>
+                <p>Filename: {selectedFile1.name}</p>
+                <p>Filetype: {selectedFile1.type}</p>
+                <p>Size in bytes: {selectedFile1.size}</p>
+                <p>
+                  lastModifiedDate:{" "}
+                  {selectedFile1.lastModifiedDate.toLocaleDateString()}
                 </p>
               </div>
             ) : (

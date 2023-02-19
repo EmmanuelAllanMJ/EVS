@@ -1,4 +1,3 @@
-from io import BytesIO
 import time
 import datetime
 import cv2 
@@ -10,10 +9,7 @@ from pyzbar.pyzbar import decode
 from pyaadhaar.utils import isSecureQr
 from pyaadhaar.decode import AadhaarSecureQr
 
-from flask_wtf import FlaskForm
-from wtforms import FileField, SubmitField
-from werkzeug.utils import secure_filename
-from wtforms.validators import InputRequired
+import face_recognition
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -73,8 +69,12 @@ def gen():
                 # print("Captured and stored")
                 if type=='dp':
                     try:
+                        os.mkdir(f'./shots/{name}')
+                    except:
+                        pass
+                    try:
                         (x,y,w,h) = faces[0]
-                        cv2.imwrite(f"./shots/{name}-{type}.jpg", img1[y:y+h,x:x+w]) 
+                        cv2.imwrite(f"./shots/{name}/{name}-{type}.jpg", img1[y:y+h,x:x+w]) 
                         capture = 0
                         response='face'
 
@@ -140,16 +140,48 @@ def onClick():
         
         if(response):
             return jsonify("Captured ",type)
+        return jsonify("Captured your face")
     return jsonify("Error")
 
 
-@app.route('/upload/<string:emailId>/<string:typeId>',methods=['POST'])
-def upload(emailId,typeId):
+@app.route('/upload/<string:emailId>/aadhar',methods=['POST'])
+def uploadAadhar(emailId):
     file = request.files['File']
+    file1 = request.files['File1']
     print(file)
+    print(file1)
     # Save the file in the uploads folder
-    file.save(os.path.join('shots', secure_filename(f"{emailId}-{typeId}.jpg")))
+    try:
+        os.mkdir(f'./shots/{emailId}')
+    except:
+        pass
+    file.save(os.path.join('shots',f"{emailId}", secure_filename(f"{emailId}-aadhar.jpg")))
+    file1.save(os.path.join('shots',f"{emailId}", secure_filename(f"{emailId}-pan.jpg")))
+    time.sleep(2)
+    try:
+        img = cv2.imread(f"./shots/{emailId}-aadhar.jpg")
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        code = decode(gray)
+        qrData = code[0].data
+
+        isSecureQR = (isSecureQr(qrData)) 
+
+        if isSecureQR:
+            secure_qr = AadhaarSecureQr(int(qrData)) 
+            decoded_secure_qr_data = secure_qr.decodeddata()
+            print(decoded_secure_qr_data)
+            secure_qr.saveimage(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
+            
+        # Pan extracting face
+        img = cv2.imread(f"./shots/{emailId}/-pan.jpg")
+        
+    except:
+        return jsonify("Cannot decode aadhar")
+
     return jsonify("Uploaded Successfully")
+
+
+
    
      
 
