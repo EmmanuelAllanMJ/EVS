@@ -9,6 +9,8 @@ from pyzbar.pyzbar import decode
 from pyaadhaar.utils import isSecureQr
 from pyaadhaar.decode import AadhaarSecureQr
 
+from werkzeug.utils import secure_filename
+
 import face_recognition
 
 app = Flask(__name__)
@@ -145,7 +147,7 @@ def onClick():
 
 
 @app.route('/upload/<string:emailId>/aadhar',methods=['POST'])
-def uploadAadhar(emailId):
+def upload(emailId):
     file = request.files['File']
     file1 = request.files['File1']
     print(file)
@@ -157,11 +159,12 @@ def uploadAadhar(emailId):
         pass
     file.save(os.path.join('shots',f"{emailId}", secure_filename(f"{emailId}-aadhar.jpg")))
     file1.save(os.path.join('shots',f"{emailId}", secure_filename(f"{emailId}-pan.jpg")))
+    print("Saved successfully")
     time.sleep(2)
     try:
-        img = cv2.imread(f"./shots/{emailId}-aadhar.jpg")
+        img = cv2.imread(f"./shots/{emailId}/{emailId}-aadhar.jpg")
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        code = decode(gray)
+        code = decode(img)
         qrData = code[0].data
 
         isSecureQR = (isSecureQr(qrData)) 
@@ -171,9 +174,37 @@ def uploadAadhar(emailId):
             decoded_secure_qr_data = secure_qr.decodeddata()
             print(decoded_secure_qr_data)
             secure_qr.saveimage(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
-            
+            print("Aadhar extraction successful")
         # Pan extracting face
-        img = cv2.imread(f"./shots/{emailId}/-pan.jpg")
+        pan_image= f"./shots/{emailId}/{emailId}-pan.jpg"
+        img = cv2.imread(pan_image)
+        image = face_recognition.load_image_file(pan_image)
+        face_location = face_recognition.face_locations(image)
+        top,right,bottom,left = face_location[0]
+        cv2.imwrite(f"./shots/{emailId}/{emailId}-pan-image.jpg", img[top:bottom,left:right]) 
+        # cv2.imwrite(f"./shots/{name}/{name}-pan-image.jpg", img) 
+        print("Pan face extraction successful")
+        time.sleep(2)
+        
+        # aadhar and dp comparison
+        image_of_aadhar = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
+        image_of_pan = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-pan-image.jpg")
+        
+
+        aadhar_face_encoding = face_recognition.face_encodings(image_of_aadhar)[0]
+        pan_face_encoding = face_recognition.face_encodings(image_of_pan)[0]
+        
+        known_face_encodings = [
+            aadhar_face_encoding,
+            pan_face_encoding,
+        ]
+        
+        face_image = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-dp.jpg")
+        face_encodings = face_recognition.face_encodings(face_image )
+        
+        results = face_recognition.compare_faces(known_face_encodings, face_encodings[0], tolerance=0.7)
+        print(results)
+        
         
     except:
         return jsonify("Cannot decode aadhar")
