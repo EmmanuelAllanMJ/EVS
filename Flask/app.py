@@ -13,6 +13,13 @@ from werkzeug.utils import secure_filename
 
 import face_recognition
 
+import os.path
+import sys
+import re
+
+from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+from msrest.authentication import CognitiveServicesCredentials
+
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -145,9 +152,45 @@ def onClick():
         return jsonify("Captured your face")
     return jsonify("Error")
 
+# Microsoft computer vision APIs
+SUBSCRIPTION_KEY_ENV_NAME = os.getenv('SUBSCRIPTION_KEY_ENV_NAME')
+COMPUTERVISION_LOCATION =os.getenv('COMPUTERVISION_LOCATION')
+
+
+
+def recognize_printed_text_in_stream(subscription_key,computervision_location):
+    """RecognizedPrintedTextUsingOCR_API.
+    This will do an OCR analysis of the given image.
+    """
+    client = ComputerVisionClient(
+        endpoint="https://" + computervision_location + ".api.cognitive.microsoft.com/",
+        credentials=CognitiveServicesCredentials(subscription_key)
+    )
+
+    with open(os.path.join(IMAGES_FOLDER, "pan.jpg"), "rb") as image_stream:
+        image_analysis = client.recognize_printed_text_in_stream(
+            image=image_stream,
+            language="en"
+        )
+
+    lines = image_analysis.regions[0].lines
+    pattern = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$'
+    full_text=  []
+    print("Recognized:\n")
+    for line in lines:
+        line_text = " ".join([word.text for word in line.words])
+        string = line_text
+        match = re.search(pattern, string)
+        if match:
+            print("PAN", line_text)
+        full_text.append(line_text)
+    print(full_text)
+            
+
 
 @app.route('/upload/<string:emailId>/aadhar',methods=['POST'])
 def upload(emailId):
+    import os
     file = request.files['File']
     file1 = request.files['File1']
     print(file)
@@ -205,6 +248,34 @@ def upload(emailId):
         results = face_recognition.compare_faces(known_face_encodings, face_encodings[0], tolerance=0.7)
         print(results)
         
+        # OCR of pan
+        print("OCR started")
+        client = ComputerVisionClient(
+            endpoint="https://" + COMPUTERVISION_LOCATION + ".cognitiveservices.azure.com",
+            credentials=CognitiveServicesCredentials(SUBSCRIPTION_KEY_ENV_NAME)
+        )
+        print("OCR started1")
+
+        with open(os.path.join(f"./shots/{emailId}/{emailId}-pan.jpg"), "rb") as image_stream:
+            image_analysis = client.recognize_printed_text_in_stream(
+                image=image_stream,
+                language="en"
+            )
+
+        lines = image_analysis.regions[0].lines
+        pattern = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$'
+        full_text=  []
+        print("Recognized:\n")
+        for line in lines:
+            line_text = " ".join([word.text for word in line.words])
+            string = line_text
+            match = re.search(pattern, string)
+            if match:
+                print("PAN", line_text)
+            full_text.append(line_text)
+        print(full_text)
+        print("OCR ended")
+        
         
     except:
         return jsonify("Cannot decode aadhar")
@@ -212,10 +283,10 @@ def upload(emailId):
     return jsonify("Uploaded Successfully")
 
 
-
+if __name__ == '__main__':
+    #server start port
+    app.run(port=5000)
    
      
 
-#server start port
-app.run(port=5000)
      
