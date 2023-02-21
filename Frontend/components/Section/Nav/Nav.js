@@ -2,19 +2,36 @@ import React from "react";
 import Button from "../../ui/Button";
 import classes from "./Nav.module.css";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 
-function Nav({ link }) {
+function Nav() {
+  const { data: session } = useSession();
+
   return (
     <nav className={classes.nav}>
       <div>
-        <Link href="/">
-          <div>EVS</div>
+        <Link href="/" passHref>
+          <a>
+            <div>EVS</div>
+          </a>
         </Link>
       </div>
-      {link && (
+      {!session && (
         <div className={classes.btn}>
-          <Link href="/signin">
-            <Button>Sign Up</Button>
+          <Link href="/signin" passHref>
+            <a>
+              <Button>Sign Up</Button>
+            </a>
+          </Link>
+        </div>
+      )}
+      {session && (
+        <div className={classes.btn}>
+          <p>{session.user.email}</p>
+          <Link href="/signin" passHref>
+            <a>
+              <Button onClick={() => signOut()}>Sign Out</Button>
+            </a>
           </Link>
         </div>
       )}

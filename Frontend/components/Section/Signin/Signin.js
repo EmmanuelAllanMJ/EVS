@@ -4,20 +4,22 @@ import classes from "./Signin.module.css";
 import Google from "./Google";
 import Facebook from "./Facebook";
 import Card from "../../ui/Card";
+import { signIn } from "next-auth/react";
 
-import { getAuth, RecaptchaVerifier } from "firebase/auth";
-
-function SIgnUp() {
-  const inputPhone = useRef();
+function SignUp() {
+  // const inputPhone = useRef();
   const onButtonClick = (e) => {
     e.preventDefault();
     console.log(inputPhone.current.value);
   };
   return (
     <div className={classes.main}>
-      <p className={classes.title}>SignUp</p>
+      <p className={classes.title}>SIgnUp</p>
       <Card>
-        <div className={classes.google}>
+        <div
+          className={classes.google}
+          onClick={() => signIn("google", { callbackUrl: "/" })}
+        >
           <div className={classes.icon}>
             <Google />
           </div>
@@ -33,7 +35,7 @@ function SIgnUp() {
         <p className={classes.or}>or</p>
 
         <input
-          ref={inputPhone}
+          // ref={inputPhone}
           className={classes.input}
           placeholder="+91  Enter your phone number"
           required
@@ -45,13 +47,5 @@ function SIgnUp() {
     </div>
   );
 }
-const getStaticProps = () => {
-  const auth = getAuth();
-  auth.languageCode = "it";
-  // To apply the default browser preference instead of explicitly setting it.
-  // firebase.auth().useDeviceLanguage();
 
-  return { props: {} };
-};
-
-export default SIgnUp;
+export default SignUp;

@@ -1,8 +1,22 @@
+import { useSession } from "next-auth/react";
 import React from "react";
+import ApiConnect from "../components/MainPage/ApiConnect";
 import MainPage from "../components/MainPage/MainPage";
 
 function index() {
-  return <MainPage />;
+  const { data: session } = useSession();
+
+  // logged in
+  if (session) {
+    return (
+      <>
+        <ApiConnect />
+      </>
+    );
+  } else {
+    return <MainPage />;
+  }
+  // return <ApiConnect />;
 }
 
 export default index;
