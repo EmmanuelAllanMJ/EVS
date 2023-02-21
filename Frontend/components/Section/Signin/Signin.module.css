@@ -36,8 +36,8 @@
 .facebook {
   width: 100%;
   display: flex;
-  padding: 0.5rem 1rem;
-  font-size: 2rem;
+  padding: 0.5rem 2rem;
+  font-size: 1.8rem;
   justify-content: center;
   border-radius: 50px;
   display: flex;

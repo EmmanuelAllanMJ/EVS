@@ -14,7 +14,7 @@ function SignUp() {
   };
   return (
     <div className={classes.main}>
-      <p className={classes.title}>SIgnUp</p>
+      <p className={classes.title}>Sign up</p>
       <Card>
         <div
           className={classes.google}

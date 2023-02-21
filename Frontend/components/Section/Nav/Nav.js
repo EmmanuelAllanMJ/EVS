@@ -12,7 +12,7 @@ function Nav() {
       <div>
         <Link href="/" passHref>
           <a>
-            <div>EVS</div>
+            <div className={classes.logo}>EVS</div>
           </a>
         </Link>
       </div>
