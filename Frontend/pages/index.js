@@ -7,7 +7,7 @@ function index() {
   const { data: session } = useSession();
 
   // logged in
-  if (!session) {
+  if (session) {
     return (
       <>
         <ApiConnect />
