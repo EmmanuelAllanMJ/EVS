@@ -14,7 +14,7 @@ function SignUp() {
   };
   return (
     <div className={classes.main}>
-      <p className={classes.title}>Sign up</p>
+      <p className={classes.title}>Sign in</p>
       <Card>
         <div
           className={classes.google}
@@ -23,14 +23,14 @@ function SignUp() {
           <div className={classes.icon}>
             <Google />
           </div>
-          <p>SignUp with Google</p>
+          <p>Sign in with Google</p>
         </div>
 
         <div className={classes.facebook}>
           <div className={classes.icon}>
             <Facebook />
           </div>
-          <p>SignUp with Facebook</p>
+          <p>Sign in with Facebook</p>
         </div>
         <p className={classes.or}>or</p>
 
