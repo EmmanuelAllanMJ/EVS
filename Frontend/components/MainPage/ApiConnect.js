@@ -20,7 +20,7 @@ export default function ApiConnect() {
   }, [response]);
 
   const baseURL = "127.0.0.1:5000/";
-  const src = "http://127.0.0.1:5000/video_feed";
+  const src = "http://127.0.0.1:5000/test";
 
   function clickPhoto(e) {
     e.preventDefault();
@@ -52,6 +52,27 @@ export default function ApiConnect() {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  function checkIfImageExists(url) {
+    try {
+      const img = new Image();
+      img.src = url;
+
+      if (img.complete) {
+        return true;
+      } else {
+        img.onload = () => {
+          return true;
+        };
+
+        img.onerror = () => {
+          return false;
+        };
+      }
+    } catch (err) {
+      return false;
+    }
   }
 
   const [selectedFile, setSelectedFile] = useState();
@@ -94,7 +115,11 @@ export default function ApiConnect() {
       {/* <h1 className={classes.title}>Hello</h1> */}
       <div className={classes.align}>
         <div className={classes.img}>
-          <img src={src} alt="video" />
+          {checkIfImageExists(src) ? (
+            <img src={src} alt="video" />
+          ) : (
+            <p>No video source found</p>
+          )}
         </div>
         <Card className={classes.capture}>
           <div className={classes.description}>
@@ -103,7 +128,22 @@ export default function ApiConnect() {
               Capture
             </Button>
           </div>
-          <div>
+
+          <div className={classes.description}>
+            <p>Aadhar</p>
+            <Button className={classes.btn}>Aadhar</Button>
+          </div>
+          <div className={classes.description}>
+            <p>PAN</p>
+            <Button className={classes.btn}>PAN</Button>
+          </div>
+          {show && <p className={classes.response}>{response}</p>}
+          <div className={classes.divider}>
+            <span className={classes.dividerLine}></span>
+            <span className={classes.dividerText}>or</span>
+            <span className={classes.dividerLine}></span>
+          </div>
+          <div className={classes.form}>
             <input type="file" name="file" onChange={changeHandler} />
             {isSelected ? (
               <div>
@@ -136,16 +176,6 @@ export default function ApiConnect() {
               <button onClick={handleSubmission}>Submit</button>
             </div>
           </div>
-
-          <div className={classes.description}>
-            <p>Aadhar</p>
-            <Button className={classes.btn}>Aadhar</Button>
-          </div>
-          <div className={classes.description}>
-            <p>PAN</p>
-            <Button className={classes.btn}>PAN</Button>
-          </div>
-          {show && <p className={classes.response}>{response}</p>}
         </Card>
       </div>
     </div>
