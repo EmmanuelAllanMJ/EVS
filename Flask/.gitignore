@@ -6,6 +6,8 @@
 env/
 venv/
 .venv/
+venv1/
+.venv1/
 env*
 dist/
 build/
