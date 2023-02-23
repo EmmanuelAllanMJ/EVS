@@ -254,7 +254,6 @@ def upload(emailId):
             endpoint="https://" + COMPUTERVISION_LOCATION + ".cognitiveservices.azure.com",
             credentials=CognitiveServicesCredentials(SUBSCRIPTION_KEY_ENV_NAME)
         )
-        print("OCR started1")
 
         with open(os.path.join(f"./shots/{emailId}/{emailId}-pan.jpg"), "rb") as image_stream:
             image_analysis = client.recognize_printed_text_in_stream(

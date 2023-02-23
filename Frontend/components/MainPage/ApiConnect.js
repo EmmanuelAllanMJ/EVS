@@ -118,33 +118,19 @@ export default function ApiConnect() {
           {checkIfImageExists(src) ? (
             <img src={src} alt="video" />
           ) : (
-            <p>No video source found</p>
+            <p>Loading...</p>
           )}
         </div>
         <Card className={classes.capture}>
           <div className={classes.description}>
             <p>Dp</p>
-            <Button onClick={clickPhoto} className={classes.btn}>
-              Capture
-            </Button>
+            <Button onClick={clickPhoto}>Capture</Button>
           </div>
 
-          <div className={classes.description}>
-            <p>Aadhar</p>
-            <Button className={classes.btn}>Aadhar</Button>
-          </div>
-          <div className={classes.description}>
-            <p>PAN</p>
-            <Button className={classes.btn}>PAN</Button>
-          </div>
           {show && <p className={classes.response}>{response}</p>}
-          <div className={classes.divider}>
-            <span className={classes.dividerLine}></span>
-            <span className={classes.dividerText}>or</span>
-            <span className={classes.dividerLine}></span>
-          </div>
+          <div className={classes.divider}></div>
           <div className={classes.form}>
-            <input type="file" name="file" onChange={changeHandler} />
+            {/* <input className={classes.upload} type="file" name="file" />
             {isSelected ? (
               <div>
                 <p>Filename: {selectedFile.name}</p>
@@ -156,24 +142,36 @@ export default function ApiConnect() {
                 </p>
               </div>
             ) : (
-              <p>Select a file to show details</p>
-            )}
-            <input type="file" name="file" onChange={changeHandler1} />
-            {isSelected1 ? (
+              <p>Upload You Aadhar</p>
+            )} */}
+            <input
+              className={classes.upload}
+              type="file"
+              name="file1"
+              onChange={changeHandler}
+            />
+            {isSelected ? (
               <div>
-                <p>Filename: {selectedFile1.name}</p>
-                <p>Filetype: {selectedFile1.type}</p>
-                <p>Size in bytes: {selectedFile1.size}</p>
-                <p>
-                  lastModifiedDate:{" "}
-                  {selectedFile1.lastModifiedDate.toLocaleDateString()}
-                </p>
+                <p> </p>
               </div>
             ) : (
-              <p>Select a file to show details</p>
+              <p>Upload You Aadhar</p>
+            )}
+            <input
+              className={classes.upload}
+              type="file"
+              name="file1"
+              onChange={changeHandler1}
+            />
+            {isSelected1 ? (
+              <div>
+                <p></p>
+              </div>
+            ) : (
+              <p>Upload You Pan</p>
             )}
             <div>
-              <button onClick={handleSubmission}>Submit</button>
+              <Button onClick={handleSubmission}>Submit</Button>
             </div>
           </div>
         </Card>
