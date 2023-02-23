@@ -1,0 +1,8 @@
+{
+  "OutputFoldersPerTargetSystem": {
+    "Local Machine": [
+      "Flask\\dlib\\out\\build\\x64-Debug",
+      "Flask\\dlib\\out\\install\\x64-Debug"
+    ]
+  }
+}

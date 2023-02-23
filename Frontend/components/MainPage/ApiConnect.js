@@ -20,7 +20,7 @@ export default function ApiConnect() {
   }, [response]);
 
   const baseURL = "127.0.0.1:5000/";
-  const src = "http://127.0.0.1:5000/test";
+  const src = "http://127.0.0.1:5000/video_feed";
 
   function clickPhoto(e) {
     e.preventDefault();
