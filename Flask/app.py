@@ -4,6 +4,8 @@ import cv2
 from flask import Flask, Response, jsonify , request
 import os
 from flask_cors import CORS, cross_origin
+import numpy as np
+import requests
 
 from pyzbar.pyzbar import decode
 from pyaadhaar.utils import isSecureQr
@@ -34,11 +36,18 @@ global capture,name,type,response
 name='sample'
 capture = 0
 response = False
+# dp_face=0
 
 @app.route('/')
 def hello():
     print(request.method)
     return jsonify({'message':'hello hi'})
+
+def to_np(fpath):
+    img=cv2.imread(fpath)
+    img=cv2.resize(img,(224,224))
+    img=np.asarray(img,dtype='float32')
+    return np.expand_dims(img,axis=0).tolist()
 
 def gen():
     """Video streaming generator function."""
@@ -85,10 +94,13 @@ def gen():
                         (x,y,w,h) = faces[0]
                         cv2.imwrite(f"./shots/{name}/{name}-{type}.jpg", img1[y:y+h,x:x+w]) 
                         capture = 0
-                        response='face'
+                        # print(f"./shots/{name}/{name}-{type}.jpg")
+                        # dp_face=to_np(f"./shots/{name}/{name}-{type}.jpg")
+                        # print(response)
 
                     except:
                         continue
+                    
                 elif type=='aadhar' :
                     # cv2.imwrite(f"./shots/{name}-{type}.jpg", img1) 
                 
@@ -207,74 +219,117 @@ def upload(emailId):
     try:
         img = cv2.imread(f"./shots/{emailId}/{emailId}-aadhar.jpg")
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        code = decode(img)
-        qrData = code[0].data
 
-        isSecureQR = (isSecureQr(qrData)) 
+        code = decode(gray)
+        # print(code)
+        qrData = code[0].data
+        print(code)
+
+        isSecureQR = (isSecureQr(qrData))
 
         if isSecureQR:
-            secure_qr = AadhaarSecureQr(int(qrData)) 
+            secure_qr = AadhaarSecureQr(int(qrData))
             decoded_secure_qr_data = secure_qr.decodeddata()
             print(decoded_secure_qr_data)
             secure_qr.saveimage(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
-            print("Aadhar extraction successful")
+            aadhar_image = to_np(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
+            print("Aadhar image parsed to np")
+            
+       
         # Pan extracting face
         pan_image= f"./shots/{emailId}/{emailId}-pan.jpg"
         img = cv2.imread(pan_image)
-        image = face_recognition.load_image_file(pan_image)
-        face_location = face_recognition.face_locations(image)
-        top,right,bottom,left = face_location[0]
-        cv2.imwrite(f"./shots/{emailId}/{emailId}-pan-image.jpg", img[top:bottom,left:right]) 
-        # cv2.imwrite(f"./shots/{name}/{name}-pan-image.jpg", img) 
-        print("Pan face extraction successful")
-        time.sleep(2)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # image = face_recognition.load_image_file(pan_image)
+        # face_location = face_recognition.face_locations(image)
+        # top,right,bottom,left = face_location[0]
+        # gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+        img1=img.copy()
+    
+        path = "haarcascade_frontalface_default.xml" 
+
+        face_cascade = cv2.CascadeClassifier(path)
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=20, minSize=(40,40))
+        
+        try:
+            (x,y,w,h) = faces[0]
+            cv2.imwrite(f"./shots/{emailId}/{emailId}-pan-image.jpg", img1[y:y+h,x:x+w]) 
+        #     # capture = 0
+            pan_image_face=to_np(f"./shots/{emailId}/{emailId}-pan-image.jpg")
+        #     # print(response)
+            print("Pan face extraction successful")
+
+        except:
+            pass
+        # # cv2.imwrite(f"./shots/{emailId}/{emailId}-pan-image.jpg", img[top:bottom,left:right]) 
+        # # cv2.imwrite(f"./shots/{name}/{name}-pan-image.jpg", img) 
+        # time.sleep(2)
+        
+        # Calling faceverify
+        FACE_VERIFY = os.getenv('FACE_VERIFY')
+        print(FACE_VERIFY)
+        # print(dp_face)
+        dp_face=to_np(f"./shots/{emailId}/{emailId}-dp.jpg")
+
+        send={
+            "truth":dp_face,
+            "check":aadhar_image
+        }
+        r=requests.post(FACE_VERIFY,json=send)
+        print("Result from face api, dp vs aadhar", r.json())
+        send={
+            "truth":dp_face,
+            "check":pan_image_face
+        }
+        r=requests.post(FACE_VERIFY,json=send)
+        print("Result from face api, dp vs pan", r.json())
         
         # aadhar and dp comparison
-        image_of_aadhar = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
-        image_of_pan = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-pan-image.jpg")
+        # image_of_aadhar = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
+        # image_of_pan = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-pan-image.jpg")
         
 
-        aadhar_face_encoding = face_recognition.face_encodings(image_of_aadhar)[0]
-        pan_face_encoding = face_recognition.face_encodings(image_of_pan)[0]
+        # aadhar_face_encoding = face_recognition.face_encodings(image_of_aadhar)[0]
+        # pan_face_encoding = face_recognition.face_encodings(image_of_pan)[0]
         
-        known_face_encodings = [
-            aadhar_face_encoding,
-            pan_face_encoding,
-        ]
+        # known_face_encodings = [
+        #     aadhar_face_encoding,
+        #     pan_face_encoding,
+        # ]
         
-        face_image = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-dp.jpg")
-        face_encodings = face_recognition.face_encodings(face_image )
+        # face_image = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-dp.jpg")
+        # face_encodings = face_recognition.face_encodings(face_image )
         
-        results = face_recognition.compare_faces(known_face_encodings, face_encodings[0], tolerance=0.7)
-        print(results)
+        # results = face_recognition.compare_faces(known_face_encodings, face_encodings[0], tolerance=0.7)
+        # print(results)
         
         # OCR of pan
-        print("OCR started")
-        client = ComputerVisionClient(
-            endpoint="https://" + COMPUTERVISION_LOCATION + ".cognitiveservices.azure.com",
-            credentials=CognitiveServicesCredentials(SUBSCRIPTION_KEY_ENV_NAME)
-        )
+        # print("OCR started")
+        # client = ComputerVisionClient(
+        #     endpoint="https://" + COMPUTERVISION_LOCATION + ".cognitiveservices.azure.com",
+        #     credentials=CognitiveServicesCredentials(SUBSCRIPTION_KEY_ENV_NAME)
+        # )
 
-        with open(os.path.join(f"./shots/{emailId}/{emailId}-pan.jpg"), "rb") as image_stream:
-            image_analysis = client.recognize_printed_text_in_stream(
-                image=image_stream,
-                language="en"
-            )
+        # with open(os.path.join(f"./shots/{emailId}/{emailId}-pan.jpg"), "rb") as image_stream:
+        #     image_analysis = client.recognize_printed_text_in_stream(
+        #         image=image_stream,
+        #         language="en"
+        #     )
 
-        lines = image_analysis.regions[0].lines
-        pattern = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$'
-        full_text=  []
-        print("Recognized:\n")
-        for line in lines:
-            line_text = " ".join([word.text for word in line.words])
-            string = line_text
-            match = re.search(pattern, string)
-            if match:
-                print("PAN", line_text)
-            full_text.append(line_text)
-        print(full_text)
-        print("OCR ended")
-        
+        # lines = image_analysis.regions[0].lines
+        # pattern = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$'
+        # full_text=  []
+        # print("Recognized:\n")
+        # for line in lines:
+        #     line_text = " ".join([word.text for word in line.words])
+        #     string = line_text
+        #     match = re.search(pattern, string)
+        #     if match:
+        #         print("PAN", line_text)
+        #     full_text.append(line_text)
+        # print(full_text)
+        # print("OCR ended")
+        # return
         
     except:
         return jsonify("Cannot decode aadhar")
