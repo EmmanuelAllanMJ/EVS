@@ -13,8 +13,6 @@ from pyaadhaar.decode import AadhaarSecureQr
 
 from werkzeug.utils import secure_filename
 
-import face_recognition
-
 import os.path
 import sys
 import re
@@ -94,9 +92,6 @@ def gen():
                         (x,y,w,h) = faces[0]
                         cv2.imwrite(f"./shots/{name}/{name}-{type}.jpg", img1[y:y+h,x:x+w]) 
                         capture = 0
-                        # print(f"./shots/{name}/{name}-{type}.jpg")
-                        # dp_face=to_np(f"./shots/{name}/{name}-{type}.jpg")
-                        # print(response)
 
                     except:
                         continue
@@ -261,9 +256,6 @@ def upload(emailId):
 
         except:
             pass
-        # # cv2.imwrite(f"./shots/{emailId}/{emailId}-pan-image.jpg", img[top:bottom,left:right]) 
-        # # cv2.imwrite(f"./shots/{name}/{name}-pan-image.jpg", img) 
-        # time.sleep(2)
         
         # Calling faceverify
         FACE_VERIFY = os.getenv('FACE_VERIFY')
@@ -284,24 +276,6 @@ def upload(emailId):
         r=requests.post(FACE_VERIFY,json=send)
         print("Result from face api, dp vs pan", r.json())
         
-        # aadhar and dp comparison
-        # image_of_aadhar = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
-        # image_of_pan = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-pan-image.jpg")
-        
-
-        # aadhar_face_encoding = face_recognition.face_encodings(image_of_aadhar)[0]
-        # pan_face_encoding = face_recognition.face_encodings(image_of_pan)[0]
-        
-        # known_face_encodings = [
-        #     aadhar_face_encoding,
-        #     pan_face_encoding,
-        # ]
-        
-        # face_image = face_recognition.load_image_file(f"./shots/{emailId}/{emailId}-dp.jpg")
-        # face_encodings = face_recognition.face_encodings(face_image )
-        
-        # results = face_recognition.compare_faces(known_face_encodings, face_encodings[0], tolerance=0.7)
-        # print(results)
         
         # OCR of pan
         print("OCR started")
@@ -329,7 +303,6 @@ def upload(emailId):
             full_text.append(line_text)
         print(full_text)
         print("OCR ended")
-        return
         
     except:
         return jsonify("Cannot decode aadhar")
