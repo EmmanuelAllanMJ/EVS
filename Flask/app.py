@@ -304,32 +304,32 @@ def upload(emailId):
         # print(results)
         
         # OCR of pan
-        # print("OCR started")
-        # client = ComputerVisionClient(
-        #     endpoint="https://" + COMPUTERVISION_LOCATION + ".cognitiveservices.azure.com",
-        #     credentials=CognitiveServicesCredentials(SUBSCRIPTION_KEY_ENV_NAME)
-        # )
+        print("OCR started")
+        client = ComputerVisionClient(
+            endpoint="https://" + COMPUTERVISION_LOCATION + ".cognitiveservices.azure.com",
+            credentials=CognitiveServicesCredentials(SUBSCRIPTION_KEY_ENV_NAME)
+        )
 
-        # with open(os.path.join(f"./shots/{emailId}/{emailId}-pan.jpg"), "rb") as image_stream:
-        #     image_analysis = client.recognize_printed_text_in_stream(
-        #         image=image_stream,
-        #         language="en"
-        #     )
+        with open(os.path.join(f"./shots/{emailId}/{emailId}-pan.jpg"), "rb") as image_stream:
+            image_analysis = client.recognize_printed_text_in_stream(
+                image=image_stream,
+                language="en"
+            )
 
-        # lines = image_analysis.regions[0].lines
-        # pattern = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$'
-        # full_text=  []
-        # print("Recognized:\n")
-        # for line in lines:
-        #     line_text = " ".join([word.text for word in line.words])
-        #     string = line_text
-        #     match = re.search(pattern, string)
-        #     if match:
-        #         print("PAN", line_text)
-        #     full_text.append(line_text)
-        # print(full_text)
-        # print("OCR ended")
-        # return
+        lines = image_analysis.regions[0].lines
+        pattern = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$'
+        full_text=  []
+        print("Recognized:\n")
+        for line in lines:
+            line_text = " ".join([word.text for word in line.words])
+            string = line_text
+            match = re.search(pattern, string)
+            if match:
+                print("PAN", line_text)
+            full_text.append(line_text)
+        print(full_text)
+        print("OCR ended")
+        return
         
     except:
         return jsonify("Cannot decode aadhar")
