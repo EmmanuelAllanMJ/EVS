@@ -51,7 +51,7 @@ def gen():
     """Video streaming generator function."""
     global capture,name,type,response
   
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(-1)
 
     while(cap.isOpened()):
         
@@ -312,7 +312,7 @@ def upload(emailId):
 
 if __name__ == '__main__':
     #server start port
-    app.run(port=5000)
+    app.run(host='0.0.0.0', port=5000)
    
      
 
