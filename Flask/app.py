@@ -39,8 +39,6 @@ response = False
 
 @app.route('/')
 def hello():
-    print(request.method)
-    print("Hello")
     return jsonify({'message':'hello hi'})
 
 def to_np(fpath):
@@ -140,24 +138,44 @@ def video_feed():
     """Video streaming route. Put this in the src attribute of an img tag."""
     return Response(gen(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+    
+def save_face(name, type):
+    try:
+        os.mkdir(f'./shots/{name}')
+    except:
+        pass
+    filename = f"./shots/{name}/{name}-feed.jpg"
+    # print(filename)
+    img = cv2.imread(filename)
+    # img = cv2.resize(img, (0,0), fx=1, fy=1) 
+    img = cv2.resize(img, (500,500) ) 
+    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    path = "haarcascade_frontalface_default.xml" 
+
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=5, minSize=(40,40))
+    (x,y,w,h) = faces[0]
+    cv2.imwrite(f"./shots/{name}/{name}-{type}.jpg", img[y:y+h,x:x+w]) 
 
 
 
 @app.route('/click_photo',methods=['POST'])
 @cross_origin()
 def onClick():
-    global capture,name,type, response
+    # global capture,name,type, response
 
     now = datetime.datetime.now()
     request_body =request.get_json()
     if request.method=='POST': 
-        capture=1
+        # capture=1
         email = request_body['email']
         name= email[:email.index('@')]
         type = request_body['click']
+        save_face(name,'dp')
         
-        if(response):
-            return jsonify("Captured ",type)
+        # if(response):
+        #     return jsonify("Captured ",type)
         return jsonify("Captured your face")
     return jsonify("Error")
 
@@ -237,10 +255,7 @@ def upload(emailId):
         pan_image= f"./shots/{emailId}/{emailId}-pan.jpg"
         img = cv2.imread(pan_image)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # image = face_recognition.load_image_file(pan_image)
-        # face_location = face_recognition.face_locations(image)
-        # top,right,bottom,left = face_location[0]
-        # gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
         img1=img.copy()
     
         path = "haarcascade_frontalface_default.xml" 
@@ -319,33 +334,19 @@ def form():
     url = request.data[22::]
     # # decoded_data = base64.b64decode((url))
     # img_file = open('./shots/pixiemj00/pixiemj00.txt','w')
-    file2 = open("./shots/pixiemj00/pixiemj00.txt","w")
-    file2.write(str(url))
-    file2.close()
+    # file2 = open("./shots/pixiemj00/pixiemj00.txt","w")
+    # file2.write(str(url))
+    # file2.close()
     decodedData = base64.b64decode(url + b'==')
 
     # Write Image from Base64 File
     
-    print("Entered")
-    imgFile = open('./shots/pixiemj00/pixiemj00-dp.png', 'wb')
+    # print("Entered")
+    imgFile = open('./shots/pixiemj00/pixiemj00-feed.jpg', 'wb')
     imgFile.write(decodedData)
     imgFile.close()
-    print("Saved")
+    # print("Saved")
     
-    # converting base64 image
-    
-    # with open('./shots/pixiemj00/blob.jpg', 'wb') as f:
-    #     f.write(url.content)
-
-    # with open(os.path.abspath(f'shots/pixiemj00/pixiemj00-dp1.jpg'), 'wb') as f:
-    #     f.write(file.content)
-    
-    # file.save(os.path.join('shots',f"pixiemj00", secure_filename(f"pixiemj00-dpp.jpg")))
-    # file.save("./shots/pixiemj00/blob.mkv")
-    # cap = cv2.VideoCapture('video/x-matroska;codecs=avc1')
-    # cv2.imread("./shots/pixiemj00/blob.jpg")
-        
-
     response = jsonify("File received and saved!")
 
 
