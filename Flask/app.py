@@ -303,12 +303,29 @@ def upload(emailId):
             full_text.append(line_text)
         print(full_text)
         print("OCR ended")
-        
+         
     except:
         return jsonify("Cannot decode aadhar")
 
     return jsonify("Uploaded Successfully")
 
+@app.route("/receive", methods=['POST'])
+def form():
+    files = request.files
+    # # print(files) 
+    file = files.get('Video')
+    print(file)
+
+    # with open(os.path.abspath(f'shots/pixiemj00/pixiemj00-dp1.jpg'), 'wb') as f:
+    #     f.write(file.content)
+    
+    file.save(os.path.join('shots',f"pixiemj00", secure_filename(f"pixiemj00-dpp.jpg")))
+        
+
+    response = jsonify("File received and saved!")
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 if __name__ == '__main__':
     #server start port

@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import classes from "./ApiConnect.module.css";
@@ -110,16 +110,91 @@ export default function ApiConnect() {
       });
   };
 
+  // streaming video
+  const width = 320; // We will scale the photo width to this
+  const height = 0; // This will be computed based on the input stream
+
+  const streaming = false;
+
+  let video = null;
+  let canvas = null;
+  let photo = null;
+  let startbutton = null;
+
+  video = document.getElementById("video");
+  canvas = document.getElementById("canvas");
+  photo = document.getElementById("photo");
+  startbutton = document.getElementById("startbutton");
+
+  // getting permission to access camera from user
+  navigator.mediaDevices
+    .getUserMedia({ video: true, audio: false })
+    .then((stream) => {
+      const recorder = new MediaRecorder(stream);
+      // console.log(recorder);
+      recorder.ondataavailable = (event) => {
+        // get the Blob from the event
+        const blob = event.data;
+        // and send that blob to the server...
+        const videoUrl = URL.createObjectURL(blob);
+        // console.log("VIdeourl", videoUrl);
+        // const file = new File([blob], "image.jpg", { type: blob.type });
+        // console.log(file);
+        var data = new FormData();
+        data.append("Video", blob);
+        fetch("http://127.0.0.1:5000/receive", {
+          method: "POST",
+          body: data,
+        })
+          .then((response) => response.json())
+          .then((json) => {
+            console.log(json);
+          });
+        // let formData = new FormData();
+
+        // formData.append("Video", videoUrl);
+        // fetch(`http://localhost:5000/receive`, {
+        //   method: "POST",
+        //   body: formData,
+        // })
+        //   .then((response) => response.json())
+        //   .then((result) => {
+        //     console.log("Success:", result);
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error:", error);
+        //   });
+      };
+
+      // make data available event fire every one second
+
+      recorder.start(5000);
+      video.srcObject = stream;
+      video.play();
+    })
+    .catch((err) => {
+      console.error(`An error occurred: ${err}`);
+    });
+
   return (
     <div className={classes.app}>
       {/* <h1 className={classes.title}>Hello</h1> */}
       <div className={classes.align}>
-        <div className={classes.img}>
+        {/* <div className={classes.img}>
           {checkIfImageExists(src) ? (
             <img src={src} alt="video" />
           ) : (
             <p>Loading...</p>
           )}
+        </div> */}
+        <div className="camera">
+          <video id="video">Video stream not available.</video>
+          <button id="startbutton">Take photo</button>
+        </div>
+
+        <canvas id="canvas"> </canvas>
+        <div class="output">
+          <img id="photo" alt="The screen capture will appear in this box." />
         </div>
         <Card className={classes.capture}>
           <div className={classes.description}>
