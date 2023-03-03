@@ -72,6 +72,7 @@ export default function ApiConnect({ BACKEND_API }) {
       .catch((error) => {
         console.error("Error:", error);
       });
+    console.log("Finished request");
   };
 
   return (

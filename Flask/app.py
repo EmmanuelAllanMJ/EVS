@@ -47,97 +47,97 @@ def to_np(fpath):
     img=np.asarray(img,dtype='float32')
     return np.expand_dims(img,axis=0).tolist()
 
-def gen():
-    """Video streaming generator function."""
-    global capture,name,type,response
+# def gen():
+#     """Video streaming generator function."""
+#     global capture,name,type,response
   
-    cap = cv2.VideoCapture(-1)
+#     cap = cv2.VideoCapture(-1)
 
-    while(cap.isOpened()):
+#     while(cap.isOpened()):
         
-        ret,img = cap.read()
-        if ret==True:
-            img = cv2.resize(img, (0,0), fx=1, fy=1) 
-            gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-            img1=img.copy()
+#         ret,img = cap.read()
+#         if ret==True:
+#             img = cv2.resize(img, (0,0), fx=1, fy=1) 
+#             gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+#             img1=img.copy()
         
-            path = "haarcascade_frontalface_default.xml" 
+#             path = "haarcascade_frontalface_default.xml" 
 
-            face_cascade = cv2.CascadeClassifier(path)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=20, minSize=(40,40))
+#             face_cascade = cv2.CascadeClassifier(path)
+#             faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=20, minSize=(40,40))
             
-            for(x,y,w,h) in faces:
-                cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+#             for(x,y,w,h) in faces:
+#                 cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
              
-            path = "haarcascade_eye.xml"
+#             path = "haarcascade_eye.xml"
 
-            eye_cascade = cv2.CascadeClassifier(path)
+#             eye_cascade = cv2.CascadeClassifier(path)
 
-            eyes = eye_cascade.detectMultiScale(gray,scaleFactor=1.02,minNeighbors=20, minSize=(10,10))
+#             eyes = eye_cascade.detectMultiScale(gray,scaleFactor=1.02,minNeighbors=20, minSize=(10,10))
 
-            for(x,y,w,h) in eyes:
-                xc = (x + x+w)/2
-                yc = (y + y+h)/2
-                radius = w/2
-                cv2.circle(img,(int(xc),int(yc)),5,(255,255,0),2)
+#             for(x,y,w,h) in eyes:
+#                 xc = (x + x+w)/2
+#                 yc = (y + y+h)/2
+#                 radius = w/2
+#                 cv2.circle(img,(int(xc),int(yc)),5,(255,255,0),2)
 
-            if(capture>0):
-                # print("Captured and stored")
-                if type=='dp':
-                    try:
-                        os.mkdir(f'./shots/{name}')
-                    except:
-                        pass
-                    try:
-                        (x,y,w,h) = faces[0]
-                        cv2.imwrite(f"./shots/{name}/{name}-{type}.jpg", img1[y:y+h,x:x+w]) 
-                        capture = 0
+#             if(capture>0):
+#                 # print("Captured and stored")
+#                 if type=='dp':
+#                     try:
+#                         os.mkdir(f'./shots/{name}')
+#                     except:
+#                         pass
+#                     try:
+#                         (x,y,w,h) = faces[0]
+#                         cv2.imwrite(f"./shots/{name}/{name}-{type}.jpg", img1[y:y+h,x:x+w]) 
+#                         capture = 0
 
-                    except:
-                        continue
+#                     except:
+#                         continue
                     
-                elif type=='aadhar' :
-                    # cv2.imwrite(f"./shots/{name}-{type}.jpg", img1) 
+#                 elif type=='aadhar' :
+#                     # cv2.imwrite(f"./shots/{name}-{type}.jpg", img1) 
                 
-                    # img = cv2.imread('./shots/{name}-aadhar.jpg')
-                    gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-                    # blur = cv2.GaussianBlur(gray,(3,3),0) #gaussian blur, blurs image 
-                    thresh_adapt = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,115,1)
-                    cv2.imwrite(f"./shots/{name}-{type}.jpg", thresh_adapt) 
+#                     # img = cv2.imread('./shots/{name}-aadhar.jpg')
+#                     gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+#                     # blur = cv2.GaussianBlur(gray,(3,3),0) #gaussian blur, blurs image 
+#                     thresh_adapt = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,115,1)
+#                     cv2.imwrite(f"./shots/{name}-{type}.jpg", thresh_adapt) 
 
-                    try:
-                        code = decode(thresh_adapt)
-                        qrData = code[0].data
-                        print(code, qrData)
+#                     try:
+#                         code = decode(thresh_adapt)
+#                         qrData = code[0].data
+#                         print(code, qrData)
 
-                        isSecureQR = (isSecureQr(qrData)) 
-                        # capture=0
-                        response = 'aadhar'
+#                         isSecureQR = (isSecureQr(qrData)) 
+#                         # capture=0
+#                         response = 'aadhar'
 
-                        if isSecureQR:
-                            secure_qr = AadhaarSecureQr(int(qrData)) 
-                            decoded_secure_qr_data = secure_qr.decodeddata()
-                            print(decoded_secure_qr_data)
-                            secure_qr.saveimage('aadhar-image.jpg')
-                            capture = 0 
-                    except:
-                        pass
+#                         if isSecureQR:
+#                             secure_qr = AadhaarSecureQr(int(qrData)) 
+#                             decoded_secure_qr_data = secure_qr.decodeddata()
+#                             print(decoded_secure_qr_data)
+#                             secure_qr.saveimage('aadhar-image.jpg')
+#                             capture = 0 
+#                     except:
+#                         pass
 
                     
-            frame = cv2.imencode('.jpg', img)[1].tobytes()
-            yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+#             frame = cv2.imencode('.jpg', img)[1].tobytes()
+#             yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-        else: 
-            break
+#         else: 
+#             break
 
         
         
 
-@app.route('/video_feed')
-def video_feed():
-    """Video streaming route. Put this in the src attribute of an img tag."""
-    return Response(gen(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+# @app.route('/video_feed')
+# def video_feed():
+#     """Video streaming route. Put this in the src attribute of an img tag."""
+#     return Response(gen(),
+#                     mimetype='multipart/x-mixed-replace; boundary=frame')
     
 def save_face(name, type):
     try:
@@ -217,7 +217,7 @@ def recognize_printed_text_in_stream(subscription_key,computervision_location):
 
 @app.route('/upload/<string:emailId>/aadhar',methods=['POST'])
 def upload(emailId):
-    import os
+    print("Reached to server")
     file = request.files['File']
     file1 = request.files['File1']
     print(file)
@@ -238,7 +238,7 @@ def upload(emailId):
         code = decode(gray)
         # print(code)
         qrData = code[0].data
-        print(code)
+        # print(code)
 
         isSecureQR = (isSecureQr(qrData))
 
@@ -261,7 +261,7 @@ def upload(emailId):
         path = "haarcascade_frontalface_default.xml" 
 
         face_cascade = cv2.CascadeClassifier(path)
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=20, minSize=(40,40))
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=5, minSize=(40,40))
         
         try:
             (x,y,w,h) = faces[0]
@@ -272,7 +272,8 @@ def upload(emailId):
             print("Pan face extraction successful")
 
         except:
-            pass
+            print("Failed to extract pan face")
+            # pass
         
         # Calling faceverify
         FACE_VERIFY = os.getenv('FACE_VERIFY')
