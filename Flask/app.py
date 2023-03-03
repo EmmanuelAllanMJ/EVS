@@ -12,6 +12,7 @@ from pyaadhaar.utils import isSecureQr
 from pyaadhaar.decode import AadhaarSecureQr
 
 from werkzeug.utils import secure_filename
+import base64
 
 import os.path
 import sys
@@ -191,7 +192,7 @@ def recognize_printed_text_in_stream(subscription_key,computervision_location):
         if match:
             print("PAN", line_text)
         full_text.append(line_text)
-    print(full_text)
+    print(full_text) 
             
 
 
@@ -309,21 +310,40 @@ def upload(emailId):
 
     return jsonify("Uploaded Successfully")
 
+
 @app.route("/receive", methods=['POST'])
 def form():
-    files = request.files
-    # # print(files) 
-    file = files.get('Video')
-    print(file)
+
+    # url = requests.get(request.data)
+    url = request.data[22::]
+    # # decoded_data = base64.b64decode((url))
+    # img_file = open('./shots/pixiemj00/pixiemj00.txt','w')
+    file2 = open("./shots/pixiemj00/pixiemj00.txt","w")
+    file2.write(str(url))
+    file2.close()
+    decodedData = base64.b64decode(url + b'==')
+
+    # Write Image from Base64 File
+    imgFile = open('./shots/pixiemj00/pixiemj00-new.png', 'wb')
+    imgFile.write(decodedData)
+    imgFile.close()
+    
+    # converting base64 image
+    
+    # with open('./shots/pixiemj00/blob.jpg', 'wb') as f:
+    #     f.write(url.content)
 
     # with open(os.path.abspath(f'shots/pixiemj00/pixiemj00-dp1.jpg'), 'wb') as f:
     #     f.write(file.content)
     
-    file.save(os.path.join('shots',f"pixiemj00", secure_filename(f"pixiemj00-dpp.jpg")))
+    # file.save(os.path.join('shots',f"pixiemj00", secure_filename(f"pixiemj00-dpp.jpg")))
+    # file.save("./shots/pixiemj00/blob.mkv")
+    # cap = cv2.VideoCapture('video/x-matroska;codecs=avc1')
+    # cv2.imread("./shots/pixiemj00/blob.jpg")
         
 
     response = jsonify("File received and saved!")
-    response.headers.add('Access-Control-Allow-Origin', '*')
+
 
     return response
 

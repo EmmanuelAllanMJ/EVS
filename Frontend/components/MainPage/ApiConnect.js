@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import classes from "./ApiConnect.module.css";
+import Camera from "./Camera";
 
 export default function ApiConnect() {
   const [response, setResponse] = useState("");
@@ -111,91 +112,58 @@ export default function ApiConnect() {
   };
 
   // streaming video
-  const width = 320; // We will scale the photo width to this
-  const height = 0; // This will be computed based on the input stream
+  // const width = 320; // We will scale the photo width to this
+  // const height = 0; // This will be computed based on the input stream
 
-  const streaming = false;
+  // const streaming = false;
 
-  let video = null;
-  let canvas = null;
-  let photo = null;
-  let startbutton = null;
+  // let video = null;
+  // let canvas = null;
+  // let photo = null;
+  // let startbutton = null;
 
-  video = document.getElementById("video");
-  canvas = document.getElementById("canvas");
-  photo = document.getElementById("photo");
-  startbutton = document.getElementById("startbutton");
+  // video = document.getElementById("video");
+  // canvas = document.getElementById("canvas");
+  // photo = document.getElementById("photo");
+  // startbutton = document.getElementById("startbutton");
 
   // getting permission to access camera from user
-  navigator.mediaDevices
-    .getUserMedia({ video: true, audio: false })
-    .then((stream) => {
-      const recorder = new MediaRecorder(stream);
-      // console.log(recorder);
-      recorder.ondataavailable = (event) => {
-        // get the Blob from the event
-        const blob = event.data;
-        // and send that blob to the server...
-        const videoUrl = URL.createObjectURL(blob);
-        // console.log("VIdeourl", videoUrl);
-        // const file = new File([blob], "image.jpg", { type: blob.type });
-        // console.log(file);
-        var data = new FormData();
-        data.append("Video", blob);
-        fetch("http://127.0.0.1:5000/receive", {
-          method: "POST",
-          body: data,
-        })
-          .then((response) => response.json())
-          .then((json) => {
-            console.log(json);
-          });
-        // let formData = new FormData();
+  // navigator.mediaDevices
+  //   .getUserMedia({ video: true, audio: false })
+  //   .then((stream) => {
+  //     video.srcObject = stream;
+  //     video.play();
+  //     const recorder = new MediaRecorder(stream);
+  //     // console.log(recorder);
+  //     recorder.ondataavailable = (event) => {
+  //       // takepicture();
+  //       console.log("capture recorder");
+  //     };
+  //     recorder.start(10000);
+  //   })
+  //   .catch((err) => {
+  //     console.error(`An error occurred: ${err}`);
+  //   });
+  // taking photo
+  // function takepicture() {
+  //   const context = canvas.getContext("2d");
+  //   if (width && height) {
+  //     canvas.width = width;
+  //     canvas.height = height;
+  //     context.drawImage(video, 0, 0, width, height);
 
-        // formData.append("Video", videoUrl);
-        // fetch(`http://localhost:5000/receive`, {
-        //   method: "POST",
-        //   body: formData,
-        // })
-        //   .then((response) => response.json())
-        //   .then((result) => {
-        //     console.log("Success:", result);
-        //   })
-        //   .catch((error) => {
-        //     console.error("Error:", error);
-        //   });
-      };
-
-      // make data available event fire every one second
-
-      recorder.start(5000);
-      video.srcObject = stream;
-      video.play();
-    })
-    .catch((err) => {
-      console.error(`An error occurred: ${err}`);
-    });
+  //     const data = canvas.toDataURL("image/png");
+  //     // photo.setAttribute("src", data);
+  //     console.log(data);
+  //     console.log("take picture");
+  //   }
+  // }
 
   return (
     <div className={classes.app}>
       {/* <h1 className={classes.title}>Hello</h1> */}
       <div className={classes.align}>
-        {/* <div className={classes.img}>
-          {checkIfImageExists(src) ? (
-            <img src={src} alt="video" />
-          ) : (
-            <p>Loading...</p>
-          )}
-        </div> */}
-        <div className="camera">
-          <video id="video">Video stream not available.</video>
-          <button id="startbutton">Take photo</button>
-        </div>
-
-        <canvas id="canvas"> </canvas>
-        <div class="output">
-          <img id="photo" alt="The screen capture will appear in this box." />
-        </div>
+        <Camera />
         <Card className={classes.capture}>
           <div className={classes.description}>
             <p>Dp</p>
@@ -205,20 +173,6 @@ export default function ApiConnect() {
           {show && <p className={classes.response}>{response}</p>}
           <div className={classes.divider}></div>
           <div className={classes.form}>
-            {/* <input className={classes.upload} type="file" name="file" />
-            {isSelected ? (
-              <div>
-                <p>Filename: {selectedFile.name}</p>
-                <p>Filetype: {selectedFile.type}</p>
-                <p>Size in bytes: {selectedFile.size}</p>
-                <p>
-                  lastModifiedDate:{" "}
-                  {selectedFile.lastModifiedDate.toLocaleDateString()}
-                </p>
-              </div>
-            ) : (
-              <p>Upload You Aadhar</p>
-            )} */}
             <input
               className={classes.upload}
               type="file"
