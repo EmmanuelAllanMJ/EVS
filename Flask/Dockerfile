@@ -39,6 +39,7 @@ RUN pip install Flask-Cors
 RUN pip install opencv-python
 RUN pip install zbarlight
 RUN pip install pyaadhaar
+RUN pip install deepface
 
 COPY ./ ./
 

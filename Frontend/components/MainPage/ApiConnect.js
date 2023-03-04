@@ -92,6 +92,20 @@ export default function ApiConnect({ BACKEND_API }) {
     console.log("Finished request");
   };
 
+  // getting response
+  const [isResponse, setIsResponse] = useState("Response");
+  fetch(`${BACKEND_API}/response`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((result) => {
+      setIsResponse(result["message"]);
+      console.log("Success:", result);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+
   return (
     <div className={classes.app}>
       {/* <h1 className={classes.title}>Hello</h1> */}
@@ -99,7 +113,7 @@ export default function ApiConnect({ BACKEND_API }) {
         <Camera BACKEND_API={BACKEND_API} email={email} />
         <Card className={classes.capture}>
           <div className={classes.description}>
-            {/* <p>Dp</p> */}
+            <p>{isResponse}</p>
             <Button onClick={clickPhoto}>Capture DP</Button>
           </div>
           <div className={classes.description}>

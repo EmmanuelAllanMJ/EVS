@@ -355,6 +355,17 @@ def form(name):
 
     return response
 
+@app.route("/response",methods=['GET','POST'])
+def response():
+    res = ""
+    if request.method == 'POST':
+        res = request.data['data']
+    res.decode("utf-8")
+    print("Response I got",res)
+    return jsonify({'message':res})
+
+BACKEND_API =os.getenv('BACKEND_API')
+
 @app.route("/check_liveliness/<string:name>",methods=['POST'])
 def check_liveliness(name):
     print("reached successfully", name)
@@ -372,6 +383,7 @@ def check_liveliness(name):
             # if not img:
             #     continue
             print(f"Perform {random_emotion}")
+            requests.post(f"{BACKEND_API}/response", json={"data":f"Perform {random_emotion}"})
             try:
                 result = DeepFace.analyze(img, actions=['emotion'])
             except:
@@ -392,6 +404,8 @@ def check_liveliness(name):
                 print(text)
         
     return "Completed successfully"
+
+
 
 if __name__ == '__main__':
     #server start port
