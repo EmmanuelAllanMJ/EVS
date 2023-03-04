@@ -377,7 +377,7 @@ def check_liveliness(name):
     print("reached successfully", name)
     # print("Print Reached here")
     # emotions = ['happy', 'sad', 'surprise', 'angry', 'neutral', 'fear', 'disgust']
-    emotions = ['happy', 'neutral', 'sad','surprise' ]
+    emotions = ['happy', 'neutral', 'surprise' ]
     performed_emotions = set()
     success_msg = "Success! You performed all emotions correctly."
     failure_msg = "Sorry, wrong emotion. Please try again."
