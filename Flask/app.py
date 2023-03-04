@@ -358,27 +358,38 @@ def form(name):
 @app.route("/check_liveliness/<string:name>",methods=['POST'])
 def check_liveliness(name):
     print("reached successfully", name)
-    emotions = ['happy', 'sad', 'surprise', 'angry', 'neutral', 'fear', 'disgust']
+    # emotions = ['happy', 'sad', 'surprise', 'angry', 'neutral', 'fear', 'disgust']
+    emotions = ['happy', 'neutral', 'sad','surprise' ]
     performed_emotions = set()
     success_msg = "Success! You performed all emotions correctly."
     failure_msg = "Sorry, wrong emotion. Please try again."
     
-    while(True):
-        img = cv2.imread(f'./shots/{name}/{name}-feed.jpg')
-        if not img:
-            continue
-        random_emotion = random.choice(list(set(emotions) - performed_emotions))
-        print(f"Perform {random_emotion}")
-        result = DeepFace.analyze(img, actions=['emotion'])
-        emotion = result[0]['dominant_emotion']
-        if emotion.lower() == random_emotion.lower():
-            # Add the emotion to the set of performed emotions
-            performed_emotions.add(random_emotion)
-            break
-        else:
-            # Display failure message if the emotions don't match
-            text = failure_msg
-            print(text)
+    random_emotion = random.choice(list(set(emotions) - performed_emotions))
+    while len(performed_emotions) < len(emotions):
+
+        while(True):
+            img = cv2.imread(f'./shots/{name}/{name}-feed.jpg')
+            # if not img:
+            #     continue
+            print(f"Perform {random_emotion}")
+            try:
+                result = DeepFace.analyze(img, actions=['emotion'])
+            except:
+                continue
+            emotion = result[0]['dominant_emotion']
+            if emotion.lower() == random_emotion.lower():
+                # Add the emotion to the set of performed emotions
+                performed_emotions.add(random_emotion)
+                try:
+                    random_emotion = random.choice(list(set(emotions) - performed_emotions))
+                except:
+                    print("Successfully verified ")
+                    return "Verified Successfully"
+                break
+            else:
+                # Display failure message if the emotions don't match
+                text = failure_msg
+                print(text)
         
     return "Completed successfully"
 
