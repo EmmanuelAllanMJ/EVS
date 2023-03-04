@@ -39,9 +39,11 @@ RUN pip install Flask-Cors
 RUN pip install opencv-python
 RUN pip install zbarlight
 RUN pip install pyaadhaar
+RUN pip install deepface
 
 COPY ./ ./
 
 EXPOSE 5000
 
-CMD ["python","app.py"]
+CMD ["python","-u","app.py"]
+

@@ -28,3 +28,9 @@ htmlcov/
 
 #photo files
 /shots/pixiemj00/
+
+#venv
+/Include
+/Lib
+/Scripts
+/pyvenv.cfg
