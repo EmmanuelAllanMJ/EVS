@@ -3,14 +3,13 @@ import React from "react";
 import ApiConnect from "../components/MainPage/ApiConnect";
 import MainPage from "../components/MainPage/MainPage";
 
-function index() {
+function index(props) {
   const { data: session } = useSession();
-
   // logged in
   if (session) {
     return (
       <>
-        <ApiConnect />
+        <ApiConnect BACKEND_API={props.BACKEND_API} />
       </>
     );
   } else {
@@ -18,5 +17,12 @@ function index() {
   }
   // return <ApiConnect />;
 }
-
 export default index;
+export async function getServerSideProps() {
+  return {
+    props: {
+      hello: "Heelow",
+      BACKEND_API: process.env.BACKEND_API,
+    },
+  };
+}

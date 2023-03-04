@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import classes from "./Camera.module.css";
 
-function Camera() {
+function Camera({ BACKEND_API, email }) {
   const [source, setSource] = useState("");
   // The width and height of the captured photo. We will set the
   // width to the value defined here, but the height will be
   // calculated based on the aspect ratio of the input stream.
 
-  const width = 320; // We will scale the photo width to this
-  let height = 0; // This will be computed based on the input stream
+  const width = 520; // We will scale the photo width to this
+  let height = 520; // This will be computed based on the input stream
 
   // |streaming| indicates whether or not we're currently streaming
   // video from the camera. Obviously, we start at false.
@@ -49,24 +49,20 @@ function Camera() {
     video = document.getElementById("video");
     canvas = document.getElementById("canvas");
     photo = document.getElementById("photo");
-    // console.log(photo);
     startbutton = document.getElementById("startbutton");
 
-    console.log("show outide");
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: false })
       .then((stream) => {
         video.srcObject = stream;
         video.play();
         const recorder = new MediaRecorder(stream);
-        // console.log(recorder);
         recorder.ondataavailable = (event) => {
-          const blob = event.data;
-          takepicture();
+          // const blob = event.data;
 
-          console.log("capture recorder camera");
+          takepicture();
         };
-        recorder.start(10000);
+        recorder.start(1000);
       })
       .catch((err) => {
         console.error(`An error occurred: ${err}`);
@@ -95,28 +91,27 @@ function Camera() {
       false
     );
 
-    startbutton.addEventListener(
-      "click",
-      (ev) => {
-        takepicture();
-        ev.preventDefault();
-      },
-      false
-    );
+    // startbutton.addEventListener(
+    //   "click",
+    //   (ev) => {
+    //     takepicture();
+    //     ev.preventDefault();
+    //   },
+    //   false
+    // );
 
     clearphoto();
   }
 
   // Fill the photo with an indication that none has been
   // captured.
-
   function clearphoto() {
     const context = canvas.getContext("2d");
     context.fillStyle = "#AAA";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     const data = canvas.toDataURL("image/png");
-    photo.setAttribute("src", data);
+    // photo.setAttribute("src", data);
     setSource(data);
   }
 
@@ -136,19 +131,21 @@ function Camera() {
       const data = canvas.toDataURL("image/png");
       // photo.setAttribute("src", data);
       setSource(data);
-      console.log(typeof data);
-      fetch(`${process.env.BACKEND_API}/receive`, {
-        method: "POST",
-        body: data,
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log("Success:", result);
+      if (email !== undefined) {
+        fetch(`${BACKEND_API}/receive/${email}`, {
+          method: "POST",
+          body: data,
         })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-      console.log(data);
+          .then((response) => response.json())
+          .then((result) => {
+            console.log("Success:", result);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+      // console.log("API request sent");
+      // console.log(data);
     } else {
       clearphoto();
     }
@@ -164,16 +161,15 @@ function Camera() {
         <video className={classes.video} id="video">
           Video stream not available.
         </video>
-        <button id="startbutton">Take photo</button>
       </div>
       <canvas id="canvas"> </canvas>
-      <div className={classes.output}>
+      {/* <div className={classes.output}>
         <img
           id="photo"
           alt="The screen capture will appear in this box."
           src={source}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

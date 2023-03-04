@@ -6,6 +6,7 @@ import os
 from flask_cors import CORS, cross_origin
 import numpy as np
 import requests
+import random
 
 from pyzbar.pyzbar import decode
 from pyaadhaar.utils import isSecureQr
@@ -13,6 +14,7 @@ from pyaadhaar.decode import AadhaarSecureQr
 
 from werkzeug.utils import secure_filename
 import base64
+from deepface import DeepFace
 
 import os.path
 import sys
@@ -39,8 +41,6 @@ response = False
 
 @app.route('/')
 def hello():
-    print(request.method)
-    print("Hello")
     return jsonify({'message':'hello hi'})
 
 def to_np(fpath):
@@ -49,115 +49,135 @@ def to_np(fpath):
     img=np.asarray(img,dtype='float32')
     return np.expand_dims(img,axis=0).tolist()
 
-def gen():
-    """Video streaming generator function."""
-    global capture,name,type,response
+# def gen():
+#     """Video streaming generator function."""
+#     global capture,name,type,response
   
-    cap = cv2.VideoCapture(-1)
+#     cap = cv2.VideoCapture(-1)
 
-    while(cap.isOpened()):
+#     while(cap.isOpened()):
         
-        ret,img = cap.read()
-        if ret==True:
-            img = cv2.resize(img, (0,0), fx=1, fy=1) 
-            gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-            img1=img.copy()
+#         ret,img = cap.read()
+#         if ret==True:
+#             img = cv2.resize(img, (0,0), fx=1, fy=1) 
+#             gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+#             img1=img.copy()
         
-            path = "haarcascade_frontalface_default.xml" 
+#             path = "haarcascade_frontalface_default.xml" 
 
-            face_cascade = cv2.CascadeClassifier(path)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=20, minSize=(40,40))
+#             face_cascade = cv2.CascadeClassifier(path)
+#             faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=20, minSize=(40,40))
             
-            for(x,y,w,h) in faces:
-                cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+#             for(x,y,w,h) in faces:
+#                 cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
              
-            path = "haarcascade_eye.xml"
+#             path = "haarcascade_eye.xml"
 
-            eye_cascade = cv2.CascadeClassifier(path)
+#             eye_cascade = cv2.CascadeClassifier(path)
 
-            eyes = eye_cascade.detectMultiScale(gray,scaleFactor=1.02,minNeighbors=20, minSize=(10,10))
+#             eyes = eye_cascade.detectMultiScale(gray,scaleFactor=1.02,minNeighbors=20, minSize=(10,10))
 
-            for(x,y,w,h) in eyes:
-                xc = (x + x+w)/2
-                yc = (y + y+h)/2
-                radius = w/2
-                cv2.circle(img,(int(xc),int(yc)),5,(255,255,0),2)
+#             for(x,y,w,h) in eyes:
+#                 xc = (x + x+w)/2
+#                 yc = (y + y+h)/2
+#                 radius = w/2
+#                 cv2.circle(img,(int(xc),int(yc)),5,(255,255,0),2)
 
-            if(capture>0):
-                # print("Captured and stored")
-                if type=='dp':
-                    try:
-                        os.mkdir(f'./shots/{name}')
-                    except:
-                        pass
-                    try:
-                        (x,y,w,h) = faces[0]
-                        cv2.imwrite(f"./shots/{name}/{name}-{type}.jpg", img1[y:y+h,x:x+w]) 
-                        capture = 0
+#             if(capture>0):
+#                 # print("Captured and stored")
+#                 if type=='dp':
+#                     try:
+#                         os.mkdir(f'./shots/{name}')
+#                     except:
+#                         pass
+#                     try:
+#                         (x,y,w,h) = faces[0]
+#                         cv2.imwrite(f"./shots/{name}/{name}-{type}.jpg", img1[y:y+h,x:x+w]) 
+#                         capture = 0
 
-                    except:
-                        continue
+#                     except:
+#                         continue
                     
-                elif type=='aadhar' :
-                    # cv2.imwrite(f"./shots/{name}-{type}.jpg", img1) 
+#                 elif type=='aadhar' :
+#                     # cv2.imwrite(f"./shots/{name}-{type}.jpg", img1) 
                 
-                    # img = cv2.imread('./shots/{name}-aadhar.jpg')
-                    gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-                    # blur = cv2.GaussianBlur(gray,(3,3),0) #gaussian blur, blurs image 
-                    thresh_adapt = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,115,1)
-                    cv2.imwrite(f"./shots/{name}-{type}.jpg", thresh_adapt) 
+#                     # img = cv2.imread('./shots/{name}-aadhar.jpg')
+#                     gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+#                     # blur = cv2.GaussianBlur(gray,(3,3),0) #gaussian blur, blurs image 
+#                     thresh_adapt = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,115,1)
+#                     cv2.imwrite(f"./shots/{name}-{type}.jpg", thresh_adapt) 
 
-                    try:
-                        code = decode(thresh_adapt)
-                        qrData = code[0].data
-                        print(code, qrData)
+#                     try:
+#                         code = decode(thresh_adapt)
+#                         qrData = code[0].data
+#                         print(code, qrData)
 
-                        isSecureQR = (isSecureQr(qrData)) 
-                        # capture=0
-                        response = 'aadhar'
+#                         isSecureQR = (isSecureQr(qrData)) 
+#                         # capture=0
+#                         response = 'aadhar'
 
-                        if isSecureQR:
-                            secure_qr = AadhaarSecureQr(int(qrData)) 
-                            decoded_secure_qr_data = secure_qr.decodeddata()
-                            print(decoded_secure_qr_data)
-                            secure_qr.saveimage('aadhar-image.jpg')
-                            capture = 0 
-                    except:
-                        pass
+#                         if isSecureQR:
+#                             secure_qr = AadhaarSecureQr(int(qrData)) 
+#                             decoded_secure_qr_data = secure_qr.decodeddata()
+#                             print(decoded_secure_qr_data)
+#                             secure_qr.saveimage('aadhar-image.jpg')
+#                             capture = 0 
+#                     except:
+#                         pass
 
                     
-            frame = cv2.imencode('.jpg', img)[1].tobytes()
-            yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+#             frame = cv2.imencode('.jpg', img)[1].tobytes()
+#             yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-        else: 
-            break
+#         else: 
+#             break
 
         
         
 
-@app.route('/video_feed')
-def video_feed():
-    """Video streaming route. Put this in the src attribute of an img tag."""
-    return Response(gen(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+# @app.route('/video_feed')
+# def video_feed():
+#     """Video streaming route. Put this in the src attribute of an img tag."""
+#     return Response(gen(),
+#                     mimetype='multipart/x-mixed-replace; boundary=frame')
+    
+def save_face(name, type):
+    try:
+        os.mkdir(f'./shots/{name}')
+    except:
+        pass
+    filename = f"./shots/{name}/{name}-feed.jpg"
+    # print(filename)
+    img = cv2.imread(filename)
+    # img = cv2.resize(img, (0,0), fx=1, fy=1) 
+    img = cv2.resize(img, (500,500) ) 
+    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    path = "haarcascade_frontalface_default.xml" 
+
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=5, minSize=(40,40))
+    (x,y,w,h) = faces[0]
+    cv2.imwrite(f"./shots/{name}/{name}-{type}.jpg", img[y:y+h,x:x+w]) 
 
 
 
 @app.route('/click_photo',methods=['POST'])
 @cross_origin()
 def onClick():
-    global capture,name,type, response
+    # global capture,name,type, response
 
     now = datetime.datetime.now()
     request_body =request.get_json()
     if request.method=='POST': 
-        capture=1
+        # capture=1
         email = request_body['email']
         name= email[:email.index('@')]
         type = request_body['click']
+        save_face(name,'dp')
         
-        if(response):
-            return jsonify("Captured ",type)
+        # if(response):
+        #     return jsonify("Captured ",type)
         return jsonify("Captured your face")
     return jsonify("Error")
 
@@ -199,7 +219,7 @@ def recognize_printed_text_in_stream(subscription_key,computervision_location):
 
 @app.route('/upload/<string:emailId>/aadhar',methods=['POST'])
 def upload(emailId):
-    import os
+    print("Reached to server")
     file = request.files['File']
     file1 = request.files['File1']
     print(file)
@@ -220,7 +240,7 @@ def upload(emailId):
         code = decode(gray)
         # print(code)
         qrData = code[0].data
-        print(code)
+        # print(code)
 
         isSecureQR = (isSecureQr(qrData))
 
@@ -237,16 +257,13 @@ def upload(emailId):
         pan_image= f"./shots/{emailId}/{emailId}-pan.jpg"
         img = cv2.imread(pan_image)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # image = face_recognition.load_image_file(pan_image)
-        # face_location = face_recognition.face_locations(image)
-        # top,right,bottom,left = face_location[0]
-        # gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
         img1=img.copy()
     
         path = "haarcascade_frontalface_default.xml" 
 
         face_cascade = cv2.CascadeClassifier(path)
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=20, minSize=(40,40))
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=5, minSize=(40,40))
         
         try:
             (x,y,w,h) = faces[0]
@@ -257,7 +274,8 @@ def upload(emailId):
             print("Pan face extraction successful")
 
         except:
-            pass
+            print("Failed to extract pan face")
+            # pass
         
         # Calling faceverify
         FACE_VERIFY = os.getenv('FACE_VERIFY')
@@ -312,44 +330,58 @@ def upload(emailId):
     return jsonify("Uploaded Successfully")
 
 
-@app.route("/receive/<string:emailId>", methods=['POST'])
-def form(emailId):
+@app.route("/receive/<string:name>", methods=['POST'])
+def form(name):
+    if name =="undefined":
+        return "Name not found, try again"
 
+    
     # url = requests.get(request.data)
-    url = request.data[22::]
-    # # decoded_data = base64.b64decode((url))
-    # img_file = open('./shots/pixiemj00/pixiemj00.txt','w')
-    file2 = open(f"./shots/{emailId}/{emailId}.txt","w")
-    file2.write(str(url))
-    file2.close()
-    decodedData = base64.b64decode(url + b'==')
+    try:
+        url = request.data[22::]
+        decodedData = base64.b64decode(url + b'==')
 
-    # Write Image from Base64 File
-    
-    print("Entered")
-    imgFile = open('./shots/pixiemj00/pixiemj00-dp.png', 'wb')
-    imgFile.write(decodedData)
-    imgFile.close()
-    print("Saved")
-    
-    # converting base64 image
-    
-    # with open('./shots/pixiemj00/blob.jpg', 'wb') as f:
-    #     f.write(url.content)
-
-    # with open(os.path.abspath(f'shots/pixiemj00/pixiemj00-dp1.jpg'), 'wb') as f:
-    #     f.write(file.content)
-    
-    # file.save(os.path.join('shots',f"pixiemj00", secure_filename(f"pixiemj00-dpp.jpg")))
-    # file.save("./shots/pixiemj00/blob.mkv")
-    # cap = cv2.VideoCapture('video/x-matroska;codecs=avc1')
-    # cv2.imread("./shots/pixiemj00/blob.jpg")
+        # Write Image from Base64 File
         
-
+        # print("Entered")
+        imgFile = open(f'./shots/{name}/{name}-feed.jpg', 'wb')
+        imgFile.write(decodedData)
+        imgFile.close()
+    except:
+        pass
+    # print("Saved")
+    
     response = jsonify("File received and saved!")
 
 
     return response
+
+@app.route("/check_liveliness/<string:name>",methods=['POST'])
+def check_liveliness(name):
+    print("reached successfully", name)
+    emotions = ['happy', 'sad', 'surprise', 'angry', 'neutral', 'fear', 'disgust']
+    performed_emotions = set()
+    success_msg = "Success! You performed all emotions correctly."
+    failure_msg = "Sorry, wrong emotion. Please try again."
+    
+    while(True):
+        img = cv2.imread(f'./shots/{name}/{name}-feed.jpg')
+        if not img:
+            continue
+        random_emotion = random.choice(list(set(emotions) - performed_emotions))
+        print(f"Perform {random_emotion}")
+        result = DeepFace.analyze(img, actions=['emotion'])
+        emotion = result[0]['dominant_emotion']
+        if emotion.lower() == random_emotion.lower():
+            # Add the emotion to the set of performed emotions
+            performed_emotions.add(random_emotion)
+            break
+        else:
+            # Display failure message if the emotions don't match
+            text = failure_msg
+            print(text)
+        
+    return "Completed successfully"
 
 if __name__ == '__main__':
     #server start port
