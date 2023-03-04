@@ -311,20 +311,20 @@ def upload(emailId):
     return jsonify("Uploaded Successfully")
 
 
-@app.route("/receive", methods=['POST'])
-def form():
+@app.route("/receive/<string:emailId>", methods=['POST'])
+def form(emailId):
 
     # url = requests.get(request.data)
     url = request.data[22::]
     # # decoded_data = base64.b64decode((url))
     # img_file = open('./shots/pixiemj00/pixiemj00.txt','w')
-    file2 = open("./shots/pixiemj00/pixiemj00.txt","w")
+    file2 = open(f"./shots/{emailId}/{emailId}.txt","w")
     file2.write(str(url))
     file2.close()
     decodedData = base64.b64decode(url + b'==')
 
     # Write Image from Base64 File
-    imgFile = open('./shots/pixiemj00/pixiemj00-new.png', 'wb')
+    imgFile = open(f'./shots/{emailId}/{emailId}-new.png', 'wb')
     imgFile.write(decodedData)
     imgFile.close()
     
