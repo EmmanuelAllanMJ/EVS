@@ -98,7 +98,7 @@ export default function ApiConnect() {
     formData.append("File1", selectedFile1);
     let email = session.user.email.split("@")[0];
     console.log(email);
-    fetch(`http://localhost:5000/upload/${email}/aadhar`, {
+    fetch(`${process.env.BACKEND_API}/upload/${email}/aadhar`, {
       method: "POST",
       body: formData,
     })
