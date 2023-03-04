@@ -40,6 +40,7 @@ response = False
 @app.route('/')
 def hello():
     print(request.method)
+    print("Hello")
     return jsonify({'message':'hello hi'})
 
 def to_np(fpath):
@@ -324,9 +325,12 @@ def form(emailId):
     decodedData = base64.b64decode(url + b'==')
 
     # Write Image from Base64 File
-    imgFile = open(f'./shots/{emailId}/{emailId}-new.png', 'wb')
+    
+    print("Entered")
+    imgFile = open('./shots/pixiemj00/pixiemj00-dp.png', 'wb')
     imgFile.write(decodedData)
     imgFile.close()
+    print("Saved")
     
     # converting base64 image
     

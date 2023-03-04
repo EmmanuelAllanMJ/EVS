@@ -66,7 +66,7 @@ function Camera() {
 
           console.log("capture recorder camera");
         };
-        recorder.start(1000);
+        recorder.start(10000);
       })
       .catch((err) => {
         console.error(`An error occurred: ${err}`);
@@ -137,7 +137,7 @@ function Camera() {
       // photo.setAttribute("src", data);
       setSource(data);
       console.log(typeof data);
-      fetch(`http://localhost:5000/receive`, {
+      fetch(`${process.env.BACKEND_API}/receive`, {
         method: "POST",
         body: data,
       })
