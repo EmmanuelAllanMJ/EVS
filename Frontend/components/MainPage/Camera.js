@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import classes from "./Camera.module.css";
 
-function Camera({ BACKEND_API }) {
+function Camera({ BACKEND_API, email }) {
   const [source, setSource] = useState("");
   // The width and height of the captured photo. We will set the
   // width to the value defined here, but the height will be
@@ -105,7 +105,6 @@ function Camera({ BACKEND_API }) {
 
   // Fill the photo with an indication that none has been
   // captured.
-
   function clearphoto() {
     const context = canvas.getContext("2d");
     context.fillStyle = "#AAA";
@@ -132,17 +131,19 @@ function Camera({ BACKEND_API }) {
       const data = canvas.toDataURL("image/png");
       // photo.setAttribute("src", data);
       setSource(data);
-      fetch(`${BACKEND_API}/receive`, {
-        method: "POST",
-        body: data,
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log("Success:", result);
+      if (email !== undefined) {
+        fetch(`${BACKEND_API}/receive/${email}`, {
+          method: "POST",
+          body: data,
         })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+          .then((response) => response.json())
+          .then((result) => {
+            console.log("Success:", result);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
       // console.log("API request sent");
       // console.log(data);
     } else {

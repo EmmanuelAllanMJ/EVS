@@ -9,6 +9,7 @@ export default function ApiConnect({ BACKEND_API }) {
   const [response, setResponse] = useState("");
   const [show, setShow] = useState(false);
   const { data: session } = useSession();
+  let email = session.user.email.split("@")[0];
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -22,10 +23,27 @@ export default function ApiConnect({ BACKEND_API }) {
 
   function clickPhoto(e) {
     e.preventDefault();
-    fetch(`${BACKEND_API}/click_photo`, {
+    fetch(`${BACKEND_API}/click_photo/${email}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: session.user.email, click: "dp" }),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setResponse(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  function checkLiveliness(e) {
+    e.preventDefault();
+    fetch(`${BACKEND_API}/check_liveliness/${email}`, {
+      method: "POST",
+      body: "hello",
     })
       .then((res) => {
         return res.json();
@@ -59,7 +77,6 @@ export default function ApiConnect({ BACKEND_API }) {
 
     formData.append("File", selectedFile);
     formData.append("File1", selectedFile1);
-    let email = session.user.email.split("@")[0];
     console.log(email);
     fetch(`${BACKEND_API}/upload/${email}/aadhar`, {
       method: "POST",
@@ -79,11 +96,14 @@ export default function ApiConnect({ BACKEND_API }) {
     <div className={classes.app}>
       {/* <h1 className={classes.title}>Hello</h1> */}
       <div className={classes.align}>
-        <Camera BACKEND_API={BACKEND_API} />
+        <Camera BACKEND_API={BACKEND_API} email={email} />
         <Card className={classes.capture}>
           <div className={classes.description}>
-            <p>Dp</p>
-            <Button onClick={clickPhoto}>Capture</Button>
+            {/* <p>Dp</p> */}
+            <Button onClick={clickPhoto}>Capture DP</Button>
+          </div>
+          <div className={classes.description}>
+            <Button onClick={checkLiveliness}>Check Liveliness</Button>
           </div>
 
           {show && <p className={classes.response}>{response}</p>}

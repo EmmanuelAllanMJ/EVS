@@ -6,6 +6,7 @@ import os
 from flask_cors import CORS, cross_origin
 import numpy as np
 import requests
+import random
 
 from pyzbar.pyzbar import decode
 from pyaadhaar.utils import isSecureQr
@@ -13,6 +14,7 @@ from pyaadhaar.decode import AadhaarSecureQr
 
 from werkzeug.utils import secure_filename
 import base64
+from deepface import DeepFace
 
 import os.path
 import sys
@@ -328,30 +330,57 @@ def upload(emailId):
     return jsonify("Uploaded Successfully")
 
 
-@app.route("/receive", methods=['POST'])
-def form():
-
-    # url = requests.get(request.data)
-    url = request.data[22::]
-    # # decoded_data = base64.b64decode((url))
-    # img_file = open('./shots/pixiemj00/pixiemj00.txt','w')
-    # file2 = open("./shots/pixiemj00/pixiemj00.txt","w")
-    # file2.write(str(url))
-    # file2.close()
-    decodedData = base64.b64decode(url + b'==')
-
-    # Write Image from Base64 File
+@app.route("/receive/<string:name>", methods=['POST'])
+def form(name):
+    if name =="undefined":
+        return "Name not found, try again"
     
-    # print("Entered")
-    imgFile = open('./shots/pixiemj00/pixiemj00-feed.jpg', 'wb')
-    imgFile.write(decodedData)
-    imgFile.close()
+    # url = requests.get(request.data)
+    try:
+        url = request.data[22::]
+        decodedData = base64.b64decode(url + b'==')
+
+        # Write Image from Base64 File
+        
+        # print("Entered")
+        imgFile = open(f'./shots/{name}/{name}-feed.jpg', 'wb')
+        imgFile.write(decodedData)
+        imgFile.close()
+    except:
+        pass
     # print("Saved")
     
     response = jsonify("File received and saved!")
 
 
     return response
+
+@app.route("/check_liveliness/<string:name>",methods=['POST'])
+def check_liveliness(name):
+    print("reached successfully", name)
+    emotions = ['happy', 'sad', 'surprise', 'angry', 'neutral', 'fear', 'disgust']
+    performed_emotions = set()
+    success_msg = "Success! You performed all emotions correctly."
+    failure_msg = "Sorry, wrong emotion. Please try again."
+    
+    while(True):
+        img = cv2.imread(f'./shots/{name}/{name}-feed.jpg')
+        if not img:
+            continue
+        random_emotion = random.choice(list(set(emotions) - performed_emotions))
+        print(f"Perform {random_emotion}")
+        result = DeepFace.analyze(img, actions=['emotion'])
+        emotion = result[0]['dominant_emotion']
+        if emotion.lower() == random_emotion.lower():
+            # Add the emotion to the set of performed emotions
+            performed_emotions.add(random_emotion)
+            break
+        else:
+            # Display failure message if the emotions don't match
+            text = failure_msg
+            print(text)
+        
+    return "Completed successfully"
 
 if __name__ == '__main__':
     #server start port
