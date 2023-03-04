@@ -356,20 +356,26 @@ def form(name):
 
     return response
 
-@app.route("/response",methods=['GET','POST'])
-def response():
-    res = ""
-    if request.method == 'POST':
-        res = request.data['data']
-    res.decode("utf-8")
-    print("Response I got",res)
-    return jsonify({'message':res})
+# @app.route("/response",methods=['GET','POST'])
+# def response():
+#     global response
+#     response = []
+#     print("Response started")
+#     if request.method == 'POST':
+#         response.append(request.get_json())
+        
+#         print("Response I got inside post",response)
+#         return "Exited"
+    
+#     print("Response I got",response)
+#     return jsonify({'message':response})
 
-BACKEND_API =os.getenv('BACKEND_API')
+BACKEND_API=os.getenv('BACKEND_API')
 
 @app.route("/check_liveliness/<string:name>",methods=['POST'])
 def check_liveliness(name):
     print("reached successfully", name)
+    # print("Print Reached here")
     # emotions = ['happy', 'sad', 'surprise', 'angry', 'neutral', 'fear', 'disgust']
     emotions = ['happy', 'neutral', 'sad','surprise' ]
     performed_emotions = set()
@@ -383,11 +389,15 @@ def check_liveliness(name):
             img = cv2.imread(f'./shots/{name}/{name}-feed.jpg')
             # if not img:
             #     continue
-            print(f"Perform {random_emotion}")
-            requests.post(f"{BACKEND_API}/response", json={"data":f"Perform {random_emotion}"})
+            # print(type(f"Perform {random_emotion}"))
+            emotion = f"Perform {random_emotion}"
+            print(emotion)
+            # emotion_json = {"data":emotion}
+            # requests.post(f"{BACKEND_API}/response", data = emotion_json)
             try:
                 result = DeepFace.analyze(img, actions=['emotion'])
             except:
+                print("Face not detected")
                 continue
             emotion = result[0]['dominant_emotion']
             if emotion.lower() == random_emotion.lower():
@@ -396,7 +406,7 @@ def check_liveliness(name):
                 try:
                     random_emotion = random.choice(list(set(emotions) - performed_emotions))
                 except:
-                    print("Successfully verified ")
+                    print(success_msg)
                     return "Verified Successfully"
                 break
             else:
