@@ -12,6 +12,10 @@
 }
 .btn {
   padding-right: 4.8rem;
+  display: flex;
+  gap: 1rem;
+  justify-items: center;
+  align-items: center;
 }
 .logo {
   width: 0px !important;
