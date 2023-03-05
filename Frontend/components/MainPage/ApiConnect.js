@@ -24,7 +24,7 @@ export default function ApiConnect({ BACKEND_API }) {
   const [response, setResponse] = useState("");
   const [show, setShow] = useState(false);
   const { data: session } = useSession();
-  const [verification, SetVerification] = useState(true);
+  const [verification, SetVerification] = useState(false);
   const [address, setAddress] = useState("");
   const [token, setToken] = useState(false);
   // let email = session.user.email.split("@")[0];
@@ -191,6 +191,7 @@ export default function ApiConnect({ BACKEND_API }) {
       .then((result) => {
         setIsResponse(result);
         console.log("Success:", result);
+        SetVerification(false);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -199,17 +200,17 @@ export default function ApiConnect({ BACKEND_API }) {
   };
 
   // getting response
-  fetch(`${BACKEND_API}/response`)
-    .then((response) => {
-      return response.json();
-    })
-    .then((result) => {
-      setIsResponse(result["message"]);
-      console.log("Success:", result);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+  // fetch(`${BACKEND_API}/response`)
+  //   .then((response) => {
+  //     return response.json();
+  //   })
+  //   .then((result) => {
+  //     setIsResponse(result["message"]);
+  //     console.log("Success:", result);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error:", error);
+  //   });
   {
     if (!verification) {
       return (
