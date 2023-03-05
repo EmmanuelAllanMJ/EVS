@@ -56,9 +56,9 @@
   cursor: pointer;
   border: 0;
 }
-.upload::file-selector-button:hover{
+.upload::file-selector-button:hover {
   transform: scale(1.1);
-  transition:  all .2s  ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 @media (max-width: 1000px) {
@@ -77,15 +77,14 @@
   .btn {
     width: 10rem;
   }
-  .upload::file-selector-button {  
+  .upload::file-selector-button {
     font-size: 1.8rem;
     padding: 1rem 1.5rem;
   }
- 
 }
 
 .description {
-  font-size: 2rem;  
+  font-size: 2rem;
 }
 .form {
   font-size: medium;
@@ -115,12 +114,11 @@
   white-space: nowrap;
 }
 
-
 .Token_container {
   background: #000;
   display: flex;
   flex-direction: column;
-  gap : 2rem;
+  gap: 2rem;
   max-width: 100%;
   height: 100vh;
   margin: 0 auto;
@@ -133,23 +131,24 @@
 }
 
 .Input_container {
-  display : flex;
+  display: flex;
   flex-direction: column;
-  gap : 1rem;
+  gap: 1rem;
   justify-content: center;
   align-items: center;
 }
 
 .input {
-  width : 350px;
+  width: 350px;
   height: 40px;
   background-color: #fff;
   border: none;
-  padding: 1.5rem 2rem ;
+  padding: 1.5rem 2rem;
   border-radius: 15px;
+  color: #000;
 }
 @media (max-width: 1000px) {
-.input{
-  width: 300px;
-}
+  .input {
+    width: 300px;
+  }
 }

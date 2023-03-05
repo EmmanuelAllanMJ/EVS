@@ -39,9 +39,10 @@ export default function ApiConnect({ BACKEND_API }) {
   };
 
   const submitHandler = () => {
+    // const QUICKNODE_RPC =
+    //   "https://silent-fragrant-mound.solana-devnet.discover.quiknode.pro/46540871a346be9dac9e4271afc950c97667652f/";
     const QUICKNODE_RPC =
-      "https://silent-fragrant-mound.solana-devnet.discover.quiknode.pro/46540871a346be9dac9e4271afc950c97667652f/";
-    // const QUICKNODE_RPC = 'https://damp-solemn-night.solana-devnet.discover.quiknode.pro/95af64c871d29d036fbaa6b1e4d7001b97e57ea9/';
+      "https://damp-solemn-night.solana-devnet.discover.quiknode.pro/95af64c871d29d036fbaa6b1e4d7001b97e57ea9/";
     const SOLANA_CONNECTION = new Connection(QUICKNODE_RPC);
 
     const FROM_KEYPAIR = Keypair.fromSecretKey(new Uint8Array(secret));
