@@ -119,29 +119,40 @@ export default function ApiConnect({ BACKEND_API }) {
           <div className={classes.description}>
             <Button onClick={checkLiveliness}>Check Liveliness</Button>
           </div>
-
           {show && <p className={classes.response}>{response}</p>}
-          <div className={classes.divider}></div>
+
+          <div className={classes.divider}>
+            <span className={classes.dividerLine}></span>
+            <span className={classes.dividerText}>File upload</span>
+            <span className={classes.dividerLine}></span>
+          </div>
           <div className={classes.form}>
-            <input
-              className={classes.upload}
-              type="file"
-              name="file1"
-              onChange={changeHandler}
-            />
-            {isSelected ? (
+            {/* {isSelected ? (
               <div>
                 <p> </p>
               </div>
             ) : (
               <p>Upload You Aadhar</p>
-            )}
-            <input
-              className={classes.upload}
-              type="file"
-              name="file1"
-              onChange={changeHandler1}
-            />
+            )} */}
+            <div className={classes.description}>
+              <p>Upload your Aadhaar</p>
+              <input
+                className={classes.upload}
+                type="file"
+                name="file1"
+                onChange={changeHandler}
+              />
+            </div>
+            <div className={classes.description}>
+              <p>Upload your PAN</p>
+              <input
+                className={classes.upload}
+                type="file"
+                name="file1"
+                onChange={changeHandler1}
+              />
+            </div>
+            {/* 
             {isSelected1 ? (
               <div>
                 <p></p>
@@ -149,10 +160,15 @@ export default function ApiConnect({ BACKEND_API }) {
             ) : (
               <p>Upload You Pan</p>
             )}
-            <div>
-              <Button onClick={handleSubmission}>Submit</Button>
-            </div>
+            <input
+              className={classes.upload}
+              type="file"
+              name="file1"
+              onChange={changeHandler1}
+            /> */}
+            <div></div>
           </div>
+          <Button onClick={handleSubmission}>Submit</Button>
         </Card>
       </div>
     </div>

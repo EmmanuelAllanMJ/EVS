@@ -162,7 +162,7 @@ function Camera({ BACKEND_API, email }) {
           Video stream not available.
         </video>
       </div>
-      <canvas id="canvas"> </canvas>
+      <canvas className={classes.img} id="canvas"></canvas>
       {/* <div className={classes.output}>
         <img
           id="photo"
