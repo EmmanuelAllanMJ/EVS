@@ -13,10 +13,10 @@ function Hero() {
             1. Sign In using your google account
           </p>
           <p className={classes.instruction}>
-            2. Input your wallet address and generate a token
+            2. Capture DP &#8594; Liveness &#8594; Upload files
           </p>
           <p className={classes.instruction}>
-            3. Capture DP &#8594; Liveness &#8594; Upload files
+            3. Input your wallet address and generate a token
           </p>
           <p className={classes.instruction}>4. Submit !</p>
         </div>
