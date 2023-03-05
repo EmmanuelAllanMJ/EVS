@@ -327,7 +327,7 @@ def upload(emailId):
     except:
         return jsonify("Cannot decode aadhar")
 
-    return jsonify("Uploaded Successfully")
+    return jsonify({"msg":"Successfully verified everything", "pid":"1234321"})
 
 
 @app.route("/receive/<string:name>", methods=['POST'])
@@ -407,7 +407,7 @@ def check_liveliness(name):
                     random_emotion = random.choice(list(set(emotions) - performed_emotions))
                 except:
                     print(success_msg)
-                    return "Verified Successfully"
+                    return "Verified Successfully aadhar and pan"
                 break
             else:
                 # Display failure message if the emotions don't match
