@@ -22,7 +22,13 @@
   border-radius: 50px;
   overflow: hidden;
 }
-
+@media (max-width: 1000px) {
+  .img
+  {  
+    height: 640px;
+    width: 340px;
+  }
+}
 #canvas {
   display: none;
 }
