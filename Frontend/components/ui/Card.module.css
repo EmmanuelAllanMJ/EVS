@@ -8,5 +8,11 @@
   align-items: center;
   gap: 1.4rem;
   padding: 3.6rem 10rem;
-  border-radius: 75px;
+  border-radius: 50px;
+}
+@media (max-width: 1000px) {
+ .position{
+  align-items: flex-start;
+  padding: 3.6rem 2.5rem;
+ }
 }

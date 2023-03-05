@@ -1,4 +1,5 @@
 import React from "react";
+import classes from "./Nav.module.css";
 
 function Avatar({
   children,
@@ -27,7 +28,7 @@ function Avatar({
     textDecoration: "none",
   };
   return (
-    <div className="avatar" style={style}>
+    <div className={classes.avatar} style={style}>
       {children}
     </div>
   );

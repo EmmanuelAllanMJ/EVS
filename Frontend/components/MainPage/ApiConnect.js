@@ -105,7 +105,6 @@ export default function ApiConnect({ BACKEND_API }) {
 
   return (
     <div className={classes.app}>
-      {/* <h1 className={classes.title}>Hello</h1> */}
       <div className={classes.align}>
         <Camera BACKEND_API={BACKEND_API} email={email} />
         <Card className={classes.capture}>
@@ -114,7 +113,7 @@ export default function ApiConnect({ BACKEND_API }) {
             <Button onClick={clickPhoto}>Capture DP</Button>
           </div>
           <div className={classes.description}>
-            <Button onClick={checkLiveliness}>Check Liveliness</Button>
+            <Button onClick={checkLiveliness}>Liveness</Button>
           </div>
           {show && <p className={classes.response}>{response}</p>}
 

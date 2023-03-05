@@ -71,16 +71,21 @@
   }
   .capture {
     justify-content: center;
-    width: 75vw;
+    width: 90vw;
     border-radius: 15px;
   }
   .btn {
     width: 10rem;
   }
+  .upload::file-selector-button {  
+    font-size: 1.8rem;
+    padding: 1rem 1.5rem;
+  }
+ 
 }
 
 .description {
-  font-size: 2rem;
+  font-size: 2rem;  
 }
 .form {
   font-size: medium;

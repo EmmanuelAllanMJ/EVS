@@ -94,6 +94,7 @@ function Nav() {
       {session && (
         <div className={classes.btn}>
           <Avatar
+            
             backgroundColor={"#000"}
             fontSize="2rem"
             border="solid 5px white"
