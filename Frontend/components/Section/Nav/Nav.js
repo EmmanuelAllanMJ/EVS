@@ -14,7 +14,7 @@ function Nav() {
           <a>
             <div className={classes.logo}>
               <div className="css-1vs2kf0">
-                <div style={{ transform: "scale(.4)" }}>
+                <div className={classes.logo_container}>
                   <svg
                     width="512.6400146484375"
                     height="170.8800048828125"
@@ -97,11 +97,11 @@ function Nav() {
             backgroundColor={"#000"}
             fontSize="2rem"
             border="solid 5px white"
-            px="50px"
-            py="50px"
+            px="5rem"
+            py="5rem"
             color={"white"}
             borderRadius="50%">
-            {" " + session?.user?.email?.charAt(0).toUpperCase() + " "}
+            {session?.user?.email?.charAt(0).toUpperCase()}
           </Avatar>
 
           <Link href="/signin" passHref>
