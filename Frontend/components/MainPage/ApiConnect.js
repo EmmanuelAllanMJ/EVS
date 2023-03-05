@@ -98,16 +98,12 @@ export default function ApiConnect({ BACKEND_API}) {
 
     sendTokens();
   }
+  const [isResponse, setIsResponse] = useState("Response");
+  let count = 0;
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShow(false);
-    }, 1000);
-    return () => {
-      setShow(true);
-      clearTimeout(timer);
-    };
-  }, [response]);
+  const { data: session } = useSession();
+
+  let email = session.user.email.split("@")[0];
 
   function clickPhoto(e) {
     e.preventDefault();
@@ -121,19 +117,21 @@ export default function ApiConnect({ BACKEND_API}) {
       })
       .then((data) => {
         console.log(data);
-        setResponse(data);
+        setIsResponse(data);
       })
       .catch((err) => {
         console.log(err);
       });
   }
   function checkLiveliness(e) {
+    setIsResponse("Show happy, neutral, surprise emotions");
     e.preventDefault();
     fetch(`${BACKEND_API}/check_liveliness/${email}`, {
       method: "POST",
       body: "hello",
     })
       .then((res) => {
+        setIsResponse("Verified successfully");
         return res.json();
       })
       .then((data) => {
@@ -170,7 +168,9 @@ export default function ApiConnect({ BACKEND_API}) {
       method: "POST",
       body: formData,
     })
-      .then((response) => response.json())
+      .then((response) => {
+        return response.json();
+      })
       .then((result) => {
         console.log("Success:", result);
       })
@@ -205,6 +205,44 @@ export default function ApiConnect({ BACKEND_API}) {
               <div className={classes.description}>
                 <p>{isResponse}</p>
                 <Button onClick={clickPhoto}>Capture DP</Button>
+  // fetch(`${BACKEND_API}/response`)
+  //   .then((response) => {
+  //     return response.json();
+  //   })
+  //   .then((result) => {
+  //     setIsResponse(result["message"]);
+  //     console.log("Success:", result);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error:", error);
+  //   });
+
+  return (
+    <div className={classes.app}>
+      {/* <h1 className={classes.title}>Hello</h1> */}
+      <div className={classes.align}>
+        <Camera BACKEND_API={BACKEND_API} email={email} />
+        <Card className={classes.capture}>
+          <div className={classes.description}>
+            <p>{isResponse}</p>
+            <Button onClick={clickPhoto}>Capture DP</Button>
+          </div>
+          <div className={classes.description}>
+            <Button onClick={checkLiveliness}>Check Liveliness</Button>
+          </div>
+
+          {show && <p className={classes.response}>{response}</p>}
+          <div className={classes.divider}></div>
+          <div className={classes.form}>
+            <input
+              className={classes.upload}
+              type="file"
+              name="file1"
+              onChange={changeHandler}
+            />
+            {isSelected ? (
+              <div>
+                <p> </p>
               </div>
               <div className={classes.description}>
                 <Button onClick={checkLiveliness}>Check Liveliness</Button>

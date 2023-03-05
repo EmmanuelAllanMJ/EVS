@@ -8,3 +8,9 @@
   cursor: pointer;
   border: 0;
 }
+.button:hover {
+  transform: translateY(-10%);
+}
+.button:active {
+  background: linear-gradient(to right, #003294 0%, #4e2270 100%);
+}

@@ -40,6 +40,9 @@
 .btn {
   width: 20rem;
 }
+.btn:hover {
+  transform: translateY(-10%);
+}
 .response {
   font-size: 2.4rem;
 }
@@ -51,7 +54,10 @@
   color: #fff;
   cursor: pointer;
   border: 0;
-  transition: all 0.25s;
+  transition: all 1s;
+}
+.upload:hover {
+  transform: translateY(-10%);
 }
 
 @media (max-width: 1000px) {
