@@ -82,7 +82,7 @@ export default function ApiConnect({ BACKEND_API }) {
         return response.json();
       })
       .then((result) => {
-        setIsResponse(result.msg);
+        setIsResponse(result);
         console.log("Success:", result);
       })
       .catch((error) => {

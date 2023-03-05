@@ -49,97 +49,6 @@ def to_np(fpath):
     img=np.asarray(img,dtype='float32')
     return np.expand_dims(img,axis=0).tolist()
 
-# def gen():
-#     """Video streaming generator function."""
-#     global capture,name,type,response
-  
-#     cap = cv2.VideoCapture(-1)
-
-#     while(cap.isOpened()):
-        
-#         ret,img = cap.read()
-#         if ret==True:
-#             img = cv2.resize(img, (0,0), fx=1, fy=1) 
-#             gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-#             img1=img.copy()
-        
-#             path = "haarcascade_frontalface_default.xml" 
-
-#             face_cascade = cv2.CascadeClassifier(path)
-#             faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=20, minSize=(40,40))
-            
-#             for(x,y,w,h) in faces:
-#                 cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
-             
-#             path = "haarcascade_eye.xml"
-
-#             eye_cascade = cv2.CascadeClassifier(path)
-
-#             eyes = eye_cascade.detectMultiScale(gray,scaleFactor=1.02,minNeighbors=20, minSize=(10,10))
-
-#             for(x,y,w,h) in eyes:
-#                 xc = (x + x+w)/2
-#                 yc = (y + y+h)/2
-#                 radius = w/2
-#                 cv2.circle(img,(int(xc),int(yc)),5,(255,255,0),2)
-
-#             if(capture>0):
-#                 # print("Captured and stored")
-#                 if type=='dp':
-#                     try:
-#                         os.mkdir(f'./shots/{name}')
-#                     except:
-#                         pass
-#                     try:
-#                         (x,y,w,h) = faces[0]
-#                         cv2.imwrite(f"./shots/{name}/{name}-{type}.jpg", img1[y:y+h,x:x+w]) 
-#                         capture = 0
-
-#                     except:
-#                         continue
-                    
-#                 elif type=='aadhar' :
-#                     # cv2.imwrite(f"./shots/{name}-{type}.jpg", img1) 
-                
-#                     # img = cv2.imread('./shots/{name}-aadhar.jpg')
-#                     gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-#                     # blur = cv2.GaussianBlur(gray,(3,3),0) #gaussian blur, blurs image 
-#                     thresh_adapt = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,115,1)
-#                     cv2.imwrite(f"./shots/{name}-{type}.jpg", thresh_adapt) 
-
-#                     try:
-#                         code = decode(thresh_adapt)
-#                         qrData = code[0].data
-#                         print(code, qrData)
-
-#                         isSecureQR = (isSecureQr(qrData)) 
-#                         # capture=0
-#                         response = 'aadhar'
-
-#                         if isSecureQR:
-#                             secure_qr = AadhaarSecureQr(int(qrData)) 
-#                             decoded_secure_qr_data = secure_qr.decodeddata()
-#                             print(decoded_secure_qr_data)
-#                             secure_qr.saveimage('aadhar-image.jpg')
-#                             capture = 0 
-#                     except:
-#                         pass
-
-                    
-#             frame = cv2.imencode('.jpg', img)[1].tobytes()
-#             yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-#         else: 
-#             break
-
-        
-        
-
-# @app.route('/video_feed')
-# def video_feed():
-#     """Video streaming route. Put this in the src attribute of an img tag."""
-#     return Response(gen(),
-#                     mimetype='multipart/x-mixed-replace; boundary=frame')
     
 def save_face(name, type):
     try:
@@ -216,9 +125,9 @@ def recognize_printed_text_in_stream(subscription_key,computervision_location):
     print(full_text) 
             
 
-
 @app.route('/upload/<string:emailId>/aadhar',methods=['POST'])
 def upload(emailId):
+    verifyCount =[0,0,0,0,0]
     print("Reached to server")
     file = request.files['File']
     file1 = request.files['File1']
@@ -232,6 +141,7 @@ def upload(emailId):
     file.save(os.path.join('shots',f"{emailId}", secure_filename(f"{emailId}-aadhar.jpg")))
     file1.save(os.path.join('shots',f"{emailId}", secure_filename(f"{emailId}-pan.jpg")))
     print("Saved successfully")
+    verifyCount[0]=1
     time.sleep(2)
     try:
         img = cv2.imread(f"./shots/{emailId}/{emailId}-aadhar.jpg")
@@ -276,7 +186,9 @@ def upload(emailId):
         except:
             print("Failed to extract pan face")
             # pass
+        verifyCount[1]=1
         
+            
         # Calling faceverify
         FACE_VERIFY = os.getenv('FACE_VERIFY')
         print(FACE_VERIFY)
@@ -288,46 +200,65 @@ def upload(emailId):
             "check":aadhar_image
         }
         r=requests.post(FACE_VERIFY,json=send)
+        if(r.json()['Match']=='Yes'):
+            verifyCount[2]=1
+
         print("Result from face api, dp vs aadhar", r.json())
         send={
             "truth":dp_face,
             "check":pan_image_face
         }
         r=requests.post(FACE_VERIFY,json=send)
+        if(r.json()['Match']=='Yes'):
+            verifyCount[3]=1
+
+        
         print("Result from face api, dp vs pan", r.json())
         
-        
-        # OCR of pan
-        print("OCR started")
-        client = ComputerVisionClient(
-            endpoint="https://" + COMPUTERVISION_LOCATION + ".cognitiveservices.azure.com",
-            credentials=CognitiveServicesCredentials(SUBSCRIPTION_KEY_ENV_NAME)
-        )
+         # OCR of pan
+        # print("OCR started")
+        # client = ComputerVisionClient(
+        #     endpoint="https://" + COMPUTERVISION_LOCATION + ".cognitiveservices.azure.com",
+        #     credentials=CognitiveServicesCredentials(SUBSCRIPTION_KEY_ENV_NAME)
+        # )
 
-        with open(os.path.join(f"./shots/{emailId}/{emailId}-pan.jpg"), "rb") as image_stream:
-            image_analysis = client.recognize_printed_text_in_stream(
-                image=image_stream,
-                language="en"
-            )
+        # with open(os.path.join(f"./shots/{emailId}/{emailId}-pan.jpg"), "rb") as image_stream:
+        #     image_analysis = client.recognize_printed_text_in_stream(
+        #         image=image_stream,
+        #         language="en"
+        #     )
 
-        lines = image_analysis.regions[0].lines
-        pattern = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$'
-        full_text=  []
-        print("Recognized:\n")
-        for line in lines:
-            line_text = " ".join([word.text for word in line.words])
-            string = line_text
-            match = re.search(pattern, string)
-            if match:
-                print("PAN", line_text)
-            full_text.append(line_text)
-        print(full_text)
-        print("OCR ended")
+        # lines = image_analysis.regions[0].lines
+        # pattern = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$'
+        # full_text=  []
+        # print("Recognized:\n")
+        # for line in lines:
+        #     line_text = " ".join([word.text for word in line.words])
+        #     string = line_text
+        #     match = re.search(pattern, string)
+        #     if match:
+        #         print("PAN", line_text)
+        #     full_text.append(line_text)
+        # print(full_text)
+        # print("OCR ended")
+        # verifyCount[4]=1
+
          
-    except:
-        return jsonify("Cannot decode aadhar")
-
-    return jsonify({"msg":"Successfully verified everything", "pid":"1234321"})
+    except Exception as e:
+        print(e)
+        return jsonify("Some problem occurred, try again")
+    
+    if(verifyCount[0]==0):
+        return jsonify("Upload proper aadhar file")
+    elif(verifyCount[1]==0):
+        return jsonify("Upload proper aadhar pan image")
+    elif(verifyCount[2]==0):
+        return jsonify("Aadhar image is not matching")
+    elif(verifyCount[3]==0):
+        return jsonify("Pan image is not matching")
+    else:
+        return jsonify("Successfully verified everything")
+    # return jsonify("Not verified, upload good")
 
 
 @app.route("/receive/<string:name>", methods=['POST'])
