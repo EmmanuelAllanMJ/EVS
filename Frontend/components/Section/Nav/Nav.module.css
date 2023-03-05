@@ -38,6 +38,7 @@
 @media (max-width: 1000px) {
   .nav{
     position: relative;
+    margin-top: -4rem;
     margin-bottom: -15rem;
   }
   .logo_container{

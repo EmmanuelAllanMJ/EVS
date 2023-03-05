@@ -10,9 +10,6 @@
 .content {
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
-  justify-content: center;
-  gap: 4.8rem;
   color: #fff;
 }
 .title {
@@ -21,7 +18,23 @@
 .description {
   font-size: 2.4rem;
 }
+.title_instruction {
+  font-size: 3rem;
+}
+.instruction {
+  font-size: 2rem;
+}
 .img {
   width: auto;
   object-fit: cover;
+}
+
+@media (max-width: 1000px)  {
+  .hero{
+    margin-top: 5vh;
+    flex-direction: column;
+  }
+  .img {
+    display: none;
+  }
 }
