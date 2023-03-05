@@ -94,17 +94,17 @@ export default function ApiConnect({ BACKEND_API }) {
 
   // getting response
   const [isResponse, setIsResponse] = useState("Response");
-  fetch(`${BACKEND_API}/response`)
-    .then((response) => {
-      return response.json();
-    })
-    .then((result) => {
-      setIsResponse(result["message"]);
-      console.log("Success:", result);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+  // fetch(`${BACKEND_API}/response`)
+  //   .then((response) => {
+  //     return response.json();
+  //   })
+  //   .then((result) => {
+  //     setIsResponse(result["message"]);
+  //     console.log("Success:", result);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error:", error);
+  //   });
 
   return (
     <div className={classes.app}>

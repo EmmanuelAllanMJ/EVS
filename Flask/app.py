@@ -162,9 +162,9 @@ def save_face(name, type):
 
 
 
-@app.route('/click_photo',methods=['POST'])
+@app.route('/click_photo/<string:emailId>',methods=['POST'])
 @cross_origin()
-def onClick():
+def onClick(emailId):
     # global capture,name,type, response
 
     now = datetime.datetime.now()
