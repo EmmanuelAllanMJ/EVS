@@ -407,7 +407,7 @@ def check_liveliness(name):
                     random_emotion = random.choice(list(set(emotions) - performed_emotions))
                 except:
                     print(success_msg)
-                    return "Verified Successfully aadhar and pan"
+                    return "Verified Liveliness"
                 break
             else:
                 # Display failure message if the emotions don't match
