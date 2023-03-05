@@ -8,18 +8,12 @@ import Camera from "./Camera";
 export default function ApiConnect({ BACKEND_API }) {
   const [response, setResponse] = useState("");
   const [show, setShow] = useState(false);
-  const { data: session } = useSession();
-  let email = session.user.email.split("@")[0];
+  const [isResponse, setIsResponse] = useState("Response");
+  let count = 0;
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShow(false);
-    }, 1000);
-    return () => {
-      setShow(true);
-      clearTimeout(timer);
-    };
-  }, [response]);
+  const { data: session } = useSession();
+
+  let email = session.user.email.split("@")[0];
 
   function clickPhoto(e) {
     e.preventDefault();
@@ -33,19 +27,21 @@ export default function ApiConnect({ BACKEND_API }) {
       })
       .then((data) => {
         console.log(data);
-        setResponse(data);
+        setIsResponse(data);
       })
       .catch((err) => {
         console.log(err);
       });
   }
   function checkLiveliness(e) {
+    setIsResponse("Show happy, neutral, surprise emotions");
     e.preventDefault();
     fetch(`${BACKEND_API}/check_liveliness/${email}`, {
       method: "POST",
       body: "hello",
     })
       .then((res) => {
+        setIsResponse("Verified successfully");
         return res.json();
       })
       .then((data) => {
@@ -82,7 +78,9 @@ export default function ApiConnect({ BACKEND_API }) {
       method: "POST",
       body: formData,
     })
-      .then((response) => response.json())
+      .then((response) => {
+        return response.json();
+      })
       .then((result) => {
         console.log("Success:", result);
       })
@@ -93,18 +91,17 @@ export default function ApiConnect({ BACKEND_API }) {
   };
 
   // getting response
-  const [isResponse, setIsResponse] = useState("Response");
-  fetch(`${BACKEND_API}/response`)
-    .then((response) => {
-      return response.json();
-    })
-    .then((result) => {
-      setIsResponse(result["message"]);
-      console.log("Success:", result);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+  // fetch(`${BACKEND_API}/response`)
+  //   .then((response) => {
+  //     return response.json();
+  //   })
+  //   .then((result) => {
+  //     setIsResponse(result["message"]);
+  //     console.log("Success:", result);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error:", error);
+  //   });
 
   return (
     <div className={classes.app}>
