@@ -6,19 +6,16 @@ import MainPage from "../components/MainPage/MainPage";
 function index(props) {
   const { data: session } = useSession();
   // logged in
-  return (
-    <ApiConnect BACKEND_API={props.BACKEND_API}/>
-  )
-  // if (session) {
-  //   return (
-  //     <>
-  //       <ApiConnect BACKEND_API={props.BACKEND_API} />
-  //     </>
-  //   );
-  // } else {
-  //   return <MainPage />;
-  // }
-  // return <ApiConnect />;
+
+  if (session) {
+    return (
+      <>
+        <ApiConnect BACKEND_API={props.BACKEND_API} />
+      </>
+    );
+  } else {
+    return <MainPage />;
+  }
 }
 export default index;
 export async function getServerSideProps() {
@@ -26,7 +23,7 @@ export async function getServerSideProps() {
     props: {
       // SECRET_KEY: process.env.SECRET_KEY,
       hello: "Heelow",
-      // BACKEND_API: process.env.BACKEND_API,
+      BACKEND_API: process.env.BACKEND_API,
     },
   };
 }
