@@ -191,7 +191,7 @@ export default function ApiConnect({ BACKEND_API }) {
       .then((result) => {
         setIsResponse(result);
         console.log("Success:", result);
-        SetVerification(false);
+        SetVerification(true);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -217,7 +217,7 @@ export default function ApiConnect({ BACKEND_API }) {
         <div className={classes.app}>
           {/* <h1 className={classes.title}>Hello</h1> */}
           <div className={classes.align}>
-            <Camera BACKEND_API={BACKEND_API} />
+            <Camera BACKEND_API={BACKEND_API} email={email} />
             {/* Need to add email={email}*/}
             <Card className={classes.capture}>
               <div className={classes.description}>
@@ -230,24 +230,6 @@ export default function ApiConnect({ BACKEND_API }) {
 
               {show && <p className={classes.response}>{response}</p>}
               <div className={classes.divider}></div>
-              <div className={classes.form}>
-                <input
-                  className={classes.upload}
-                  type="file"
-                  name="file1"
-                  onChange={changeHandler}
-                />
-              </div>
-              {isSelected && (
-                <div>
-                  <div>
-                    <p> </p>
-                  </div>
-                  <div className={classes.description}>
-                    <Button onClick={checkLiveliness}>Check Liveliness</Button>
-                  </div>
-                </div>
-              )}
 
               {show && <p className={classes.response}>{response}</p>}
               <div className={classes.divider}></div>
