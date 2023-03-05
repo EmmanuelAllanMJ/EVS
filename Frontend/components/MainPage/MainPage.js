@@ -6,7 +6,6 @@ import classes from "./MainPage.module.css";
 function MainPage() {
   return (
     <Fragment>
-      <Nav link={true} />
       <div className={classes.container}>
         <section className={classes.one}>
           <Hero />

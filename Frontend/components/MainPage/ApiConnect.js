@@ -276,7 +276,7 @@ export default function ApiConnect({ BACKEND_API }) {
         return (
           <div className={classes.Token_container}>
             <div className={classes.Input_container}>
-              <span>Enter your wallet address : </span>
+              <p>Enter your wallet address </p>
               <input
                 type="text"
                 onChange={addressChangeHandler}
@@ -284,9 +284,7 @@ export default function ApiConnect({ BACKEND_API }) {
                 placeholder="Enter your wallet address here!"
               />
             </div>
-            <button onClick={submitHandler} className={classes.button}>
-              Get Token!
-            </button>
+            <Button onClick={submitHandler}>Get Token!</Button>
           </div>
         );
     }
