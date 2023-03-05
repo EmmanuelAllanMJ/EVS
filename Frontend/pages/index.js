@@ -6,6 +6,7 @@ import Head from "next/head";
 function index(props) {
   const { data: session } = useSession();
   // logged in
+
   if (session) {
     return (
       <>
@@ -25,12 +26,12 @@ function index(props) {
       </>
     );
   }
-  // return <ApiConnect />;
 }
 export default index;
 export async function getServerSideProps() {
   return {
     props: {
+      // SECRET_KEY: process.env.SECRET_KEY,
       hello: "Heelow",
       BACKEND_API: process.env.BACKEND_API,
     },
