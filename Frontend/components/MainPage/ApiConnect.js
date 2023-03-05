@@ -127,15 +127,14 @@ export default function ApiConnect({ BACKEND_API }) {
             <span className={classes.dividerLine}></span>
           </div>
           <div className={classes.form}>
-            {/* {isSelected ? (
-              <div>
-                <p> </p>
-              </div>
-            ) : (
-              <p>Upload You Aadhar</p>
-            )} */}
             <div className={classes.description}>
-              <p>Upload your Aadhaar</p>
+              {isSelected ? (
+                <div>
+                  <p> </p>
+                </div>
+              ) : (
+                <p>Upload You Aadhar</p>
+              )}
               <input
                 className={classes.upload}
                 type="file"
@@ -144,7 +143,13 @@ export default function ApiConnect({ BACKEND_API }) {
               />
             </div>
             <div className={classes.description}>
-              <p>Upload your PAN</p>
+              {isSelected1 ? (
+                <div>
+                  <p></p>
+                </div>
+              ) : (
+                <p>Upload You Pan</p>
+              )}
               <input
                 className={classes.upload}
                 type="file"
@@ -152,21 +157,6 @@ export default function ApiConnect({ BACKEND_API }) {
                 onChange={changeHandler1}
               />
             </div>
-            {/* 
-            {isSelected1 ? (
-              <div>
-                <p></p>
-              </div>
-            ) : (
-              <p>Upload You Pan</p>
-            )}
-            <input
-              className={classes.upload}
-              type="file"
-              name="file1"
-              onChange={changeHandler1}
-            /> */}
-            <div></div>
           </div>
           <Button onClick={handleSubmission}>Submit</Button>
         </Card>
