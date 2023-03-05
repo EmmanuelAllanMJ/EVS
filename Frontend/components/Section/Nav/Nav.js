@@ -3,7 +3,7 @@ import Button from "../../ui/Button";
 import classes from "./Nav.module.css";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
-
+import Avatar from "./Avatar";
 function Nav() {
   const { data: session } = useSession();
 
@@ -13,22 +13,22 @@ function Nav() {
         <Link href="/" passHref>
           <a>
             <div className={classes.logo}>
-              <div class="css-1vs2kf0">
-                <div style={{transform: "scale(.4)"}}>
+              <div className="css-1vs2kf0">
+                <div className={classes.logo_container}>
                   <svg
                     width="512.6400146484375"
                     height="170.8800048828125"
                     viewBox="0 0 270 90"
-                    class="css-1j8o68f">
+                    className="css-1j8o68f">
                     <defs id="SvgjsDefs2515">
                       <linearGradient id="SvgjsLinearGradient2522">
                         <stop
                           id="SvgjsStop2523"
-                          stop-color="#7f00ff"
+                          stopColor="#7f00ff"
                           offset="0"></stop>
                         <stop
                           id="SvgjsStop2524"
-                          stop-color="#e100ff"
+                          stopColor="#e100ff"
                           offset="1"></stop>
                       </linearGradient>
                     </defs>
@@ -93,7 +93,18 @@ function Nav() {
       )}
       {session && (
         <div className={classes.btn}>
-          <p>{session.user.email}</p>
+          <Avatar
+            
+            backgroundColor={"#000"}
+            fontSize="2rem"
+            border="solid 5px white"
+            px="5rem"
+            py="5rem"
+            color={"white"}
+            borderRadius="50%">
+            {session?.user?.email?.charAt(0).toUpperCase()}
+          </Avatar>
+
           <Link href="/signin" passHref>
             <a>
               <Button onClick={() => signOut()}>Sign Out</Button>

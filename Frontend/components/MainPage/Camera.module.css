@@ -11,7 +11,24 @@
   width: 320px;
   height: 240px;
 }
-
+.img {
+  /* margin-left: 10%; */
+  /* margin-top: 10%; */
+  width: 640px;
+  height: 480px;
+  max-width: 640px;
+  max-height: 480px;
+  border: solid 5px rgb(163, 163, 163);
+  border-radius: 50px;
+  overflow: hidden;
+}
+@media (max-width: 1000px) {
+  .img
+  {  
+    height: 640px;
+    width: 340px;
+  }
+}
 #canvas {
   display: none;
 }

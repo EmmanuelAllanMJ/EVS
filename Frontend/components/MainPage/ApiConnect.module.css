@@ -3,7 +3,7 @@
   max-width: 100%;
   height: 100vh;
   margin: 0 auto;
-  padding: 0 15rem;
+  padding: 0 10rem;
 }
 .align {
   display: flex;
@@ -38,7 +38,7 @@
   border-radius: 45px;
 }
 .btn {
-  width: 20rem;
+  width: 10rem;
 }
 .btn:hover {
   transform: translateY(-10%);
@@ -47,17 +47,18 @@
   font-size: 2.4rem;
 }
 .upload::file-selector-button {
-  background-image: linear-gradient(to right, #0037a4 0%, #7030a0 100%);
+  background: linear-gradient(to right, #0037a4 0%, #7030a0 100%);
+  white-space: nowrap;
   font-size: 2rem;
-  padding: 1.6rem 3rem;
+  padding: 1.5rem 2rem;
   border-radius: 50px;
   color: #fff;
   cursor: pointer;
   border: 0;
-  transition: all 1s;
 }
-.upload:hover {
-  transform: translateY(-10%);
+.upload::file-selector-button:hover{
+  transform: scale(1.1);
+  transition:  all .2s  ease-in-out;
 }
 
 @media (max-width: 1000px) {
@@ -70,16 +71,21 @@
   }
   .capture {
     justify-content: center;
-    width: 75%;
+    width: 90vw;
     border-radius: 15px;
   }
   .btn {
-    width: 30%;
+    width: 10rem;
   }
+  .upload::file-selector-button {  
+    font-size: 1.8rem;
+    padding: 1rem 1.5rem;
+  }
+ 
 }
 
 .description {
-  font-size: 2rem;
+  font-size: 2rem;  
 }
 .form {
   font-size: medium;
@@ -92,14 +98,12 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
 }
-
 .dividerLine {
-  border-top: 1px solid #edeff1;
+  border-top: 1px solid #ffffff;
   width: 40%;
 }
 .dividerText {
@@ -108,6 +112,7 @@
   line-height: 18px;
   color: #ffffff;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 

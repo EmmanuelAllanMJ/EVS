@@ -1,17 +1,20 @@
 .nav {
-  padding: 1rem 1rem;
-  margin: -3rem 1rem;
-  width: 50rem;
+  padding: 1vw 1vw;
+  margin: -3vw 1vw;
+  width: 50vw;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: transparent;
   width: 100%;
   position: fixed;
-  top: 0;
 }
 .btn {
   padding-right: 4.8rem;
+  display: flex;
+  gap: 1rem;
+  justify-items: center;
+  align-items: center;
 }
 .logo {
   width: 0px !important;
@@ -27,4 +30,20 @@
   background: linear-gradient(to right, #38309c 0%, #7030a0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.logo_container{
+  transform: scale(.4)
+}
+@media (max-width: 1000px) {
+  .nav{
+    position: relative;
+    margin-bottom: -15rem;
+  }
+  .logo_container{
+    transform: scale(.3);
+  }
+  .avatar{
+    display: none !important;
+  }
 }

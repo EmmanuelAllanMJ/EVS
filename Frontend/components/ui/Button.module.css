@@ -1,16 +1,20 @@
 .button {
   background: linear-gradient(to right, #0037a4 0%, #7030a0 100%);
+  white-space: nowrap;
   font-size: 2rem;
-  /* font-weight: bold; */
-  padding: 1.6rem 3rem;
+  padding: 1.5rem 2rem;
   border-radius: 50px;
   color: #fff;
   cursor: pointer;
   border: 0;
 }
-.button:hover {
-  transform: translateY(-10%);
+.button:hover{
+  transform: scale(1.1);
+  transition:  all .2s  ease-in-out;
 }
-.button:active {
-  background: linear-gradient(to right, #003294 0%, #4e2270 100%);
+@media (max-width: 1000px) {
+  .button{
+    font-size: 1.8rem;
+    padding: 1rem 1.5rem;
+  }
 }
