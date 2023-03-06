@@ -99,13 +99,9 @@ export default function ApiConnect({ BACKEND_API }) {
         )
       );
 
-      const latestBlockHash = await SOLANA_CONNECTION.getLatestBlockhash(
-        "confirmed"
-      );
+      const latestBlockHash = await SOLANA_CONNECTION.getLatestBlockhash('confirmed');
       tx.recentBlockhash = await latestBlockHash.blockhash;
-      const signature = await sendAndConfirmTransaction(SOLANA_CONNECTION, tx, [
-        FROM_KEYPAIR,
-      ]);
+      const signature = await sendAndConfirmTransaction(SOLANA_CONNECTION,tx,[FROM_KEYPAIR]);
       console.log(
         "\x1b[32m", //Green Text
         `   Transaction Success!🎉`,
