@@ -24,7 +24,7 @@ export default function ApiConnect({ BACKEND_API }) {
   const [response, setResponse] = useState("");
   const [show, setShow] = useState(false);
   const { data: session } = useSession();
-  const [verification, SetVerification] = useState(true);
+  const [verification, SetVerification] = useState(false);
   const [address, setAddress] = useState("");
   const [token, setToken] = useState(false);
   // let email = session.user.email.split("@")[0];
