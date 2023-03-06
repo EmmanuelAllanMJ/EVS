@@ -109,7 +109,16 @@ _Below are the instructions to setup the project locally , don't forget to cd to
    ```sh
    npm install
    ```
-3.  
+3. Setup Flask
+   ```sh
+   cd Flask
+   docker build -t emmanuelallan/evs:1.1 .
+   docker run -p 5000:5000 emmanuelallan/evs:1.1
+   ``` 
+   or
+   ```sh
+   docker pull emmanuelallan/evs:1.1
+   ```
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -119,7 +128,7 @@ _Below are the instructions to setup the project locally , don't forget to cd to
 ## Roadmap
 
 - [x] Add Readme
-- [ ] Make site responsive 
+- [x] Make site responsive 
 
 See the [open issues](https://github.com/Utsav82/Bollywood-Back/issues) for a full list of proposed features (and known issues).
 
@@ -133,14 +142,14 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- COTRIBUTORS -->
+<!-- CONTRIBUTORS -->
 
 ## Contributors
 
-Emmanuel Allan MJ - [@EmmanuelAllanMJ](https://github.com/EmmanuelAllanMJ)
-Malay Kumar - [@Malay-dev](https://github.com/Malay-dev)
-Sarvajit Visagan - [@KnotSarvajit](https://github.com/KnotSarvajit)
-Sree Dananjay S - [@Dananjay996](https://github.com/Dananjay996)
+- Emmanuel Allan MJ - [@EmmanuelAllanMJ](https://github.com/EmmanuelAllanMJ)
+- Malay Kumar - [@Malay-dev](https://github.com/Malay-dev)
+- Sarvajit Visagan - [@KnotSarvajit](https://github.com/KnotSarvajit)
+- Sree Dananjay S - [@Dananjay996](https://github.com/Dananjay996)
 
 Project Link: [https://github.com/EmmanuelAllanMJ/EVS](https://github.com/EmmanuelAllanMJ/EVS)
 
