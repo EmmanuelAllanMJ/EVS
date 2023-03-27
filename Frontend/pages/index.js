@@ -26,6 +26,7 @@ function index(props) {
       </>
     );
   }
+
 }
 export default index;
 export async function getServerSideProps() {
