@@ -304,6 +304,7 @@ BACKEND_API=os.getenv('BACKEND_API')
 @app.route("/check_liveliness/<string:name>",methods=['POST'])
 def check_liveliness(name):
     print("reached successfully", name)
+    count =0
     # print("Print Reached here")
     # emotions = ['happy', 'sad', 'surprise', 'angry', 'neutral', 'fear', 'disgust']
     emotions = ['happy', 'neutral', 'surprise' ]
@@ -315,16 +316,25 @@ def check_liveliness(name):
     while len(performed_emotions) < len(emotions):
 
         while(True):
+            if(count<10):
+                random_number = random_number = random.randint(1, 10)
+            else:
+                random_number = random_number = random.randint(1, 100)
+                
             img = cv2.imread(f'./shots/{name}/{name}-feed.jpg')
             # if not img:
             #     continue
-            # print(type(f"Perform {random_emotion}"))
+            # print(type(f"Perform {random_emotion}")) 
             emotion = f"Perform {random_emotion}"
             print(emotion)
             # emotion_json = {"data":emotion}
             # requests.post(f"{BACKEND_API}/response", data = emotion_json)
             try:
                 result = DeepFace.analyze(img, actions=['emotion'])
+                if(random_number==7):
+                    filename = f'./shots/{name}/images/image-{count}.jpg'
+                    count+=1 
+                    cv2.imwrite(filename,img)
             except:
                 print("Face not detected")
                 continue
