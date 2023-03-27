@@ -43,11 +43,11 @@ response = False
 def hello():
     return jsonify({'message':'hello hi'})
 
-def to_np(fpath):
-    img=cv2.imread(fpath)
-    img=cv2.resize(img,(224,224))
-    img=np.asarray(img,dtype='float32')
-    return np.expand_dims(img,axis=0).tolist()
+# def to_np(fpath):
+#     img=cv2.imread(fpath)
+#     img=cv2.resize(img,(224,224))
+#     img=np.asarray(img,dtype='float32')
+#     return np.expand_dims(img,axis=0).tolist()
 
     
 def save_face(name, type):
@@ -60,7 +60,6 @@ def save_face(name, type):
     print(filename)
     img = cv2.imread(filename)
     cv2.imwrite(f"./shots/{name}/images/{name}-{type}.jpg", img) 
-
 
 
 @app.route('/click_photo/<string:emailId>',methods=['POST'])
@@ -115,11 +114,21 @@ def recognize_printed_text_in_stream(subscription_key,computervision_location):
             print("PAN", line_text)
         full_text.append(line_text)
     print(full_text) 
-            
+         
+
+
+def is_valid_aadhaar(aadhaar_number):
+    print(len(aadhaar_number))
+    if len(aadhaar_number)==21:
+        return True
+    else:
+        return False
+   
 
 @app.route('/upload/<string:emailId>/aadhar',methods=['POST'])
 def upload(emailId):
     verifyCount =[0,0,0,0,0]
+    name= emailId
     print("Reached to server")
     file = request.files['File']
     file1 = request.files['File1']
@@ -151,34 +160,37 @@ def upload(emailId):
             decoded_secure_qr_data = secure_qr.decodeddata()
             print(decoded_secure_qr_data)
             secure_qr.saveimage(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
-            aadhar_image = to_np(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
-            print("Aadhar image parsed to np")
+            # aadhar_image = to_np(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
+            # print("Aadhar image parsed to np")
             
        
-        # Pan extracting face
-        pan_image= f"./shots/{emailId}/{emailId}-pan.jpg"
-        img = cv2.imread(pan_image)
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # # Pan extracting face
+        # pan_image= f"./shots/{emailId}/{emailId}-pan.jpg"
+        # img = cv2.imread(pan_image)
+        # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        img1=img.copy()
+        # img1=img.copy()
     
-        path = "haarcascade_frontalface_default.xml" 
+        # path = "haarcascade_frontalface_default.xml" 
 
-        face_cascade = cv2.CascadeClassifier(path)
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=5, minSize=(40,40))
+        # face_cascade = cv2.CascadeClassifier(path)
+        # faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=5, minSize=(40,40))
         
-        try:
-            (x,y,w,h) = faces[0]
-            cv2.imwrite(f"./shots/{emailId}/{emailId}-pan-image.jpg", img1[y:y+h,x:x+w]) 
-        #     # capture = 0
-            pan_image_face=to_np(f"./shots/{emailId}/{emailId}-pan-image.jpg")
-        #     # print(response)
-            print("Pan face extraction successful")
+        # try:
+        #     (x,y,w,h) = faces[0]
+        #     cv2.imwrite(f"./shots/{emailId}/{emailId}-pan-image.jpg", img1[y:y+h,x:x+w]) 
+        # #     # capture = 0
+        #     pan_image_face=to_np(f"./shots/{emailId}/{emailId}-pan-image.jpg")
+        # #     # print(response)
+        #     print("Pan face extraction successful")
 
-        except:
-            print("Failed to extract pan face")
-            # pass
-        verifyCount[1]=1
+        # except:
+        #     print("Failed to extract pan face")
+        #     # pass
+        print("Number ",decoded_secure_qr_data['referenceid'])
+        print("Verified ",is_valid_aadhaar(decoded_secure_qr_data['referenceid']))
+        if(is_valid_aadhaar(decoded_secure_qr_data['referenceid'])):
+            verifyCount[1]=1
         
             
         # Calling faceverify
@@ -193,25 +205,44 @@ def upload(emailId):
         # }
         # r=requests.post(FACE_VERIFY,json=send)
         
-        result = DeepFace.verify(img1_path = "./allan.jpg", 
-            img2_path = "./allan.jpg", 
-            model_name = 'VGG-Face'
-        )
+        directory = f'./shots/{name}/images'
+        captured_file = f"./shots/{name}/images/{name}-dp.jpg"
+        file_count = 0
+        verified_count = 0
+        for filename in os.listdir(directory):
+            file_count+=1
+            print(filename)
+            print(f"entered loop {file_count}")
+            if  filename.endswith('.jpg') or filename.endswith('.png'):
+            #     # do something with the image file
+                print(f"entered if check {file_count}, verify {verified_count}")
+                file_path = os.path.join(directory, filename)
         
-        if(result==True):
+                result = DeepFace.verify(img1_path = captured_file, 
+                    img2_path = file_path, 
+                    model_name = 'VGG-Face'
+                )
+        
+                # print(f"result {result}, verified {result['verified']}")
+                if(result['verified']==True):
+                    verified_count+=1
+                
+        if file_count == verified_count:
             verifyCount[2]=1
 
-        print("Result from face api, dp vs aadhar", r.json())
-        send={
-            "truth":dp_face,
-            "check":pan_image_face
-        }
-        r=requests.post(FACE_VERIFY,json=send)
-        if(r.json()['Match']=='Yes'):
-            verifyCount[3]=1
+        # print(f"File count {file_count}, verified count {verified_count}")
+
+        # print("Result from face api, dp vs aadhar", r.json())
+        # send={
+        #     "truth":dp_face,
+        #     "check":pan_image_face
+        # }
+        # r=requests.post(FACE_VERIFY,json=send)
+        # if(r.json()['Match']=='Yes'):
+        #     verifyCount[3]=1
 
         
-        print("Result from face api, dp vs pan", r.json())
+        # print("Result from face api, dp vs pan", r.json())
         
          # OCR of pan
         # print("OCR started")
@@ -239,7 +270,7 @@ def upload(emailId):
         #     full_text.append(line_text)
         # print(full_text)
         # print("OCR ended")
-        # verifyCount[4]=1
+        verifyCount[3]=1
 
          
     except Exception as e:
@@ -247,15 +278,18 @@ def upload(emailId):
         return jsonify("Some problem occurred, try again")
     
     if(verifyCount[0]==0):
-        return jsonify("Upload proper aadhar file")
+        return jsonify({'msg':"Upload proper aadhar file","success":False})
     elif(verifyCount[1]==0):
-        return jsonify("Upload proper aadhar pan image")
+        return jsonify({'msg':"Upload proper aadhar pan image","success":False})
     elif(verifyCount[2]==0):
-        return jsonify("Aadhar image is not matching")
+        return jsonify({'msg':"Aadhar image is not matching","success":False})
     elif(verifyCount[3]==0):
-        return jsonify("Pan image is not matching")
+        return jsonify({'msg':"Pan image is not matching","success":False})
+    elif(verified_count==file_count):
+        
+        return jsonify({'msg':"Not verified, Please try again","success":True})
     else:
-        return jsonify("Successfully verified everything")
+        return jsonify({'msg':"Not verified, Please try again","success":False})
     # return jsonify("Not verified, upload good")
 
 
