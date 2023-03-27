@@ -140,7 +140,7 @@ def upload(emailId):
     except:
         pass
     file.save(os.path.join('shots',f"{emailId}", secure_filename(f"{emailId}-aadhar.jpg")))
-    file1.save(os.path.join('shots',f"{emailId}", secure_filename(f"{emailId}-pan.jpg")))
+    file1.save(os.path.join('shots',f"{emailId}","images", secure_filename(f"{emailId}-pan.jpg")))
     print("Saved successfully")
     verifyCount[0]=1
     time.sleep(2)
@@ -159,9 +159,8 @@ def upload(emailId):
             secure_qr = AadhaarSecureQr(int(qrData))
             decoded_secure_qr_data = secure_qr.decodeddata()
             print(decoded_secure_qr_data)
-            secure_qr.saveimage(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
-            # aadhar_image = to_np(f"./shots/{emailId}/{emailId}-aadhar-image.jpg")
-            # print("Aadhar image parsed to np")
+            secure_qr.saveimage(f"./shots/{emailId}/images/{emailId}-aadhar-image.jpg")
+
             
        
         # # Pan extracting face
