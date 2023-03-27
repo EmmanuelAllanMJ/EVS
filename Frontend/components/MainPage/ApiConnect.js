@@ -272,6 +272,12 @@ export default function ApiConnect({ BACKEND_API }) {
     }
   }
   {
+    if (token)
+      return (
+        <div>
+          <Successful homeHandler={homeHandler} />
+        </div>
+      );
     if (verification) {
       if (!token)
         return (
@@ -290,12 +296,6 @@ export default function ApiConnect({ BACKEND_API }) {
         );
     }
     {
-      if (token)
-        return (
-          <div>
-            <Successful homeHandler={homeHandler} />
-          </div>
-        );
     }
   }
 }

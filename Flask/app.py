@@ -52,22 +52,14 @@ def to_np(fpath):
     
 def save_face(name, type):
     try:
-        os.mkdir(f'./shots/{name}')
+        os.mkdir(f'./shots/{name}/images/')
+        os.mkdir(f'./shots/{name}/')
     except:
         pass
     filename = f"./shots/{name}/{name}-feed.jpg"
-    # print(filename)
+    print(filename)
     img = cv2.imread(filename)
-    # img = cv2.resize(img, (0,0), fx=1, fy=1) 
-    img = cv2.resize(img, (500,500) ) 
-    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    path = "haarcascade_frontalface_default.xml" 
-
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.10, minNeighbors=5, minSize=(40,40))
-    (x,y,w,h) = faces[0]
-    cv2.imwrite(f"./shots/{name}/{name}-{type}.jpg", img[y:y+h,x:x+w]) 
+    cv2.imwrite(f"./shots/{name}/images/{name}-{type}.jpg", img) 
 
 
 
@@ -76,8 +68,8 @@ def save_face(name, type):
 def onClick(emailId):
     # global capture,name,type, response
 
-    now = datetime.datetime.now()
     request_body =request.get_json()
+    print(request_body)
     if request.method=='POST': 
         # capture=1
         email = request_body['email']
@@ -190,17 +182,23 @@ def upload(emailId):
         
             
         # Calling faceverify
-        FACE_VERIFY = os.getenv('FACE_VERIFY')
-        print(FACE_VERIFY)
-        # print(dp_face)
-        dp_face=to_np(f"./shots/{emailId}/{emailId}-dp.jpg")
+        # FACE_VERIFY = os.getenv('FACE_VERIFY')
+        # print(FACE_VERIFY)
+        # # print(dp_face)
+        # dp_face=to_np(f"./shots/{emailId}/{emailId}-dp.jpg")
 
-        send={
-            "truth":dp_face,
-            "check":aadhar_image
-        }
-        r=requests.post(FACE_VERIFY,json=send)
-        if(r.json()['Match']=='Yes'):
+        # send={
+        #     "truth":dp_face,
+        #     "check":aadhar_image
+        # }
+        # r=requests.post(FACE_VERIFY,json=send)
+        
+        result = DeepFace.verify(img1_path = "./allan.jpg", 
+            img2_path = "./allan.jpg", 
+            model_name = 'VGG-Face'
+        )
+        
+        if(result==True):
             verifyCount[2]=1
 
         print("Result from face api, dp vs aadhar", r.json())
