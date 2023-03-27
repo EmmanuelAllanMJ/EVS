@@ -1,7 +1,4 @@
 .nav {
-  padding: 1vw 1vw;
-  margin: -3vw 1vw;
-  width: 50vw;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -17,9 +14,7 @@
   align-items: center;
 }
 .logo {
-  width: 0px !important;
-  margin-top: 0;
- 
+  font-size: 3.6rem;
   font-weight: bold;
 
   background: linear-gradient(to right, #38309c 0%, #7030a0 100%);
@@ -32,10 +27,10 @@
   -webkit-text-fill-color: transparent;
 }
 
-.logo_container{
-  transform: scale(.4)
+.logo_container {
+  transform: scale(0.4);
 }
-@media (max-width: 1000px) {
+/* @media (max-width: 1000px) {
   .nav{
     position: relative;
     margin-top: -4rem;
@@ -47,4 +42,4 @@
   .avatar{
     display: none !important;
   }
-}
+} */

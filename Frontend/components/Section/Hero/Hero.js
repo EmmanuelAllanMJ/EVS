@@ -1,11 +1,15 @@
 import React, { Fragment } from "react";
+import Button from "../../ui/Button";
 import Nav from "../Nav/Nav";
 import classes from "./Hero.module.css";
+import { signIn } from "next-auth/react";
 
 function Hero() {
+  const adminHandler = () => {};
+  const userHandler = () => {};
   return (
     <div className={classes.hero}>
-      <div className={classes.content}>
+      {/* <div className={classes.content}>
         <h2 className={classes.title}>Your instant automated e-KYC client</h2>
         <div>
           <h3 className={classes.title_instruction}>Instructions</h3>
@@ -23,7 +27,13 @@ function Hero() {
       </div>
       <div className={classes.img}>
         <img src={"./images/aadharSample.png"} alt="aadhar Sample" />
-      </div>
+      </div> */}
+      <Button onClick={() => signIn("google", { callbackUrl: "/admin" })}>
+        Admin Login
+      </Button>
+      <Button onClick={() => signIn("google", { callbackUrl: "/user" })}>
+        User Login
+      </Button>
     </div>
   );
 }

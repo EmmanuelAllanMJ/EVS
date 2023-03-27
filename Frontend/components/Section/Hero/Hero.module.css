@@ -12,6 +12,11 @@
   flex-direction: column;
   color: #fff;
 }
+/* .content {
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+} */
 .title {
   font-size: 3.6rem;
 }
@@ -29,8 +34,8 @@
   object-fit: cover;
 }
 
-@media (max-width: 1000px)  {
-  .hero{
+@media (max-width: 1000px) {
+  .hero {
     margin-top: 5vh;
     flex-direction: column;
   }
