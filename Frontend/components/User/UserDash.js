@@ -1,13 +1,13 @@
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import Button from "../ui/Button";
-// import classes from "./AdminDash.modules.css";
+// import classes from "./UserDash.modules.css";
 
-function AdminDash() {
+function UserDash() {
   const { data: session } = useSession();
   const [isAdmin, setIsAdmin] = useState("");
-  async function adminHandler(email) {
-    const response = await fetch("/api/admin", {
+  async function userHandler(email) {
+    const response = await fetch("/api/user", {
       method: "POST",
       body: JSON.stringify(email),
       header: {
@@ -38,11 +38,11 @@ function AdminDash() {
       <p>Lorem ipsum dolor sit amet.</p>
       <p>Lorem ipsum dolor sit amet.</p>
       {session && (
-        <Button onClick={() => adminHandler(session.user.email)}>
+        <Button onClick={() => userHandler(session.user.email)}>
           Click me
         </Button>
       )}
-      {session && isAdmin && <Button>You are a admin</Button>}
+      {session && isAdmin && <Button>You are a user</Button>}
       {session && <Button>Connected</Button>}
       {!session && <Button>Disconnected</Button>}
     </div>
@@ -50,4 +50,4 @@ function AdminDash() {
   // return <div>Hello</div>;
 }
 
-export default AdminDash;
+export default UserDash;

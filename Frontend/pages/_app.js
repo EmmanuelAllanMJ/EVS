@@ -6,7 +6,7 @@ function MyApp({ Component, pageProps, session }) {
   return (
     <div>
       <SessionProvider session={session}>
-        {/* <Nav /> */}
+        <Nav />
         <Component {...pageProps} />
       </SessionProvider>
     </div>
