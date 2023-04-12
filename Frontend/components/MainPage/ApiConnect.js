@@ -1,19 +1,6 @@
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState, useRef } from "react";
-import {
-  getOrCreateAssociatedTokenAccount,
-  createTransferInstruction,
-} from "@solana/spl-token";
-import {
-  Connection,
-  Keypair,
-  ParsedAccountData,
-  PublicKey,
-  sendAndConfirmTransaction,
-  Transaction,
-} from "@solana/web3.js";
 
-import secret from "../../guideSecret.json";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import classes from "./ApiConnect.module.css";
@@ -33,89 +20,9 @@ export default function ApiConnect({ BACKEND_API }) {
     SetVerification(false);
   };
 
-  const addressChangeHandler = (e) => {
-    setAddress(e.target.value);
-    console.log(`address is : ${address}`);
-  };
+  
 
-  const submitHandler = () => {
-    // const QUICKNODE_RPC =
-    //   "https://silent-fragrant-mound.solana-devnet.discover.quiknode.pro/46540871a346be9dac9e4271afc950c97667652f/";
-    const QUICKNODE_RPC =
-      "https://damp-solemn-night.solana-devnet.discover.quiknode.pro/95af64c871d29d036fbaa6b1e4d7001b97e57ea9/";
-    const SOLANA_CONNECTION = new Connection(QUICKNODE_RPC);
-
-    const FROM_KEYPAIR = Keypair.fromSecretKey(new Uint8Array(secret));
-    // const DESTINATION_WALLET = 'FvqMQUsxEyWB7VBaqNKbPS3auGkK19pRKLmbpxyNJ2js';
-    // const DESTINATION_WALLET = 'CajdsRtcjrHaBzNXGvweQL8b2KdLmPjW1pitYFp54zXF';
-    const DESTINATION_WALLET = address.toString();
-    const MINT_ADDRESS = "3nijrqKwNzzyqLjPbnNTxwyn4yKa5cvBo1RYoSv1Fwvk";
-    const TRANSFER_AMOUNT = 1;
-
-    // async function getNumberDecimals(mintAddress) {
-    //   const info = await SOLANA_CONNECTION.getParsedAccountInfo(new PublicKey(MINT_ADDRESS));
-    //   const result = (info.value ?.data as ParsedAccountData).parsed.info.decimals;
-    //   return result;
-    // }
-
-    async function sendTokens() {
-      console.log(
-        `Sending ${TRANSFER_AMOUNT} ${MINT_ADDRESS} from ${FROM_KEYPAIR.publicKey.toString()} to ${DESTINATION_WALLET}.`
-      );
-
-      console.log(`1 - Getting Source Token Account`);
-      let sourceAccount = await getOrCreateAssociatedTokenAccount(
-        SOLANA_CONNECTION,
-        FROM_KEYPAIR,
-        new PublicKey(MINT_ADDRESS),
-        FROM_KEYPAIR.publicKey
-      );
-      console.log(`    Source Account: ${sourceAccount.address.toString()}`);
-
-      console.log(`2 - Getting Destination Token Account`);
-      let destinationAccount = await getOrCreateAssociatedTokenAccount(
-        SOLANA_CONNECTION,
-        FROM_KEYPAIR,
-        new PublicKey(MINT_ADDRESS),
-        new PublicKey(DESTINATION_WALLET)
-      );
-      console.log(
-        `    Destination Account: ${destinationAccount.address.toString()}`
-      );
-
-      // console.log(`3 - Fetching Number of Decimals for Mint: ${MINT_ADDRESS}`);
-      // const numberDecimals = await getNumberDecimals(MINT_ADDRESS);
-      // console.log(`    Number of Decimals: ${numberDecimals}`);
-
-      //Step 4
-      console.log(`4 - Creating and Sending Transaction`);
-      const tx = new Transaction();
-      tx.add(
-        createTransferInstruction(
-          sourceAccount.address,
-          destinationAccount.address,
-          FROM_KEYPAIR.publicKey,
-          TRANSFER_AMOUNT * Math.pow(10, 9)
-        )
-      );
-
-      const latestBlockHash = await SOLANA_CONNECTION.getLatestBlockhash(
-        "confirmed"
-      );
-      tx.recentBlockhash = await latestBlockHash.blockhash;
-      const signature = await sendAndConfirmTransaction(SOLANA_CONNECTION, tx, [
-        FROM_KEYPAIR,
-      ]);
-      console.log(
-        "\x1b[32m", //Green Text
-        `   Transaction Success!🎉`,
-        `\n    https://explorer.solana.com/tx/${signature}?cluster=devnet`
-      );
-      setToken(true);
-    }
-
-    sendTokens();
-  };
+  
   const [isResponse, setIsResponse] = useState("Response");
   let count = 0;
 
@@ -281,21 +188,7 @@ export default function ApiConnect({ BACKEND_API }) {
         </div>
       );
     if (verification) {
-      if (!token)
-        return (
-          <div className={classes.Token_container}>
-            <div className={classes.Input_container}>
-              <p>Enter your wallet address </p>
-              <input
-                type="text"
-                onChange={addressChangeHandler}
-                className={classes.input}
-                placeholder="Enter your wallet address here!"
-              />
-            </div>
-            <Button onClick={submitHandler}>Get Token!</Button>
-          </div>
-        );
+      
     }
     {
     }
